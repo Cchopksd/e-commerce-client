@@ -5,6 +5,7 @@ import ReduxProvider from "./store-provider";
 
 import { Merriweather } from "next/font/google";
 import { decryptToken, getToken } from "./utils/token";
+import Footer from "./components/Footer";
 
 const merriweather = Merriweather({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default async function RootLayout({
           {/* ส่งข้อมูล userInfo ไปที่ Navbar */}
           <Navbar userInfo={userInfo} />
           {children}
+          <Footer />
         </body>
       </html>
     </ReduxProvider>
