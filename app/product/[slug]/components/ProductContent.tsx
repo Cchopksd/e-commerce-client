@@ -2,6 +2,9 @@
 import Image from "next/image";
 import React from "react";
 import { LuPlus, LuMinus, LuShoppingCart } from "react-icons/lu";
+import { addToCart } from "./action";
+import { decrement, increment } from "@/libs/features/cart/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/libs/hooks";
 
 interface ProductImage {
   image_url: string;
@@ -19,16 +22,20 @@ interface ProductData {
   sale_out: number;
   images: ProductImage[];
 }
+
 interface Product {
   product: ProductData;
+  token: string | null;
 }
 
-export default function ProductContent({ product }: Product) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const [quantity, setQuantity] = React.useState(1);
-  let images: string[] = [];
+export default function ProductContent({ product, token }: Product) {
+  const dispatch = useAppDispatch();
 
-  product.images.map((items: any) => {
+  const { value } = useAppSelector((state) => state.cart);
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const images: string[] = [];
+
+  product.images.map((items) => {
     images.push(items.image_url);
   });
 
@@ -36,11 +43,19 @@ export default function ProductContent({ product }: Product) {
     ((product.price - product.discount) / product.price) * 100,
   );
 
-  const handleQuantityChange = (action: any) => {
-    if (action === "increase" && quantity < product.amount) {
-      setQuantity((prev) => prev + 1);
-    } else if (action === "decrease" && quantity > 1) {
-      setQuantity((prev) => prev - 1);
+  const handleCartSubmit = async () => {
+    if (value <= 0) {
+      return;
+    }
+    if (!token) {
+      window.location.href = "/login";
+    }
+
+    try {
+      const result = await addToCart(token, product._id, value);
+      console.log(result);
+    } catch (error) {
+      console.error("Cart submission error:", error);
     }
   };
 
@@ -67,11 +82,14 @@ export default function ProductContent({ product }: Product) {
                     ? "border-blue-500"
                     : "border-transparent"
                 }`}>
-                <img
-                  src={img}
-                  alt={`Thumbnail ${idx + 1}`}
-                  className="object-cover w-full h-full"
-                />
+                <div className="w-full h-full relative aspect-square overflow-hidden">
+                  <Image
+                    src={img}
+                    alt={`Thumbnail ${idx + 1}`}
+                    className="object-cover w-full h-auto"
+                    fill
+                  />
+                </div>
               </button>
             ))}
           </div>
@@ -126,15 +144,15 @@ export default function ProductContent({ product }: Product) {
               <span className="text-sm font-medium">Quantity:</span>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleQuantityChange("decrease")}
-                  disabled={quantity <= 1}
+                  onClick={() => dispatch(decrement(1))}
+                  disabled={value <= 1}
                   className="shadow-sm p-1 rounded-md border">
                   <LuMinus className="h-4 w-4" />
                 </button>
-                <span className="w-12 text-center">{quantity}</span>
+                <span className="w-12 text-center">{value}</span>
                 <button
-                  onClick={() => handleQuantityChange("increase")}
-                  disabled={quantity >= 100}
+                  onClick={() => dispatch(increment(1))}
+                  disabled={value >= product.amount}
                   className="shadow-sm p-1 rounded-md border">
                   <LuPlus className="h-4 w-4" />
                 </button>
@@ -142,7 +160,9 @@ export default function ProductContent({ product }: Product) {
             </div>
 
             <section className="w-full">
-              <button className="w-full flex justify-center gap-4 bg-black text-white p-2 shadow-sm rounded-lg">
+              <button
+                onClick={handleCartSubmit}
+                className="w-full flex justify-center gap-4 bg-black text-white p-2 shadow-sm rounded-lg">
                 <LuShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
               </button>

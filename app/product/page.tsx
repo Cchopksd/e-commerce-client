@@ -35,11 +35,12 @@ export default async function Product({
           <p>Showing all {totalProduct} results</p>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {product.map((product: any) => (
-            <div key={product._id} className="flex justify-center">
-              <ProductCard product={product} />
-            </div>
-          ))}
+          {product &&
+            product.map((product: any) => (
+              <div key={product._id} className="flex justify-center">
+                <ProductCard product={product} />
+              </div>
+            ))}
         </div>
         <div className="w-full py-10">
           <Pagination
