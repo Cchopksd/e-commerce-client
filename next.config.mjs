@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     // This wildcard will allow images from any domain
     remotePatterns: [
@@ -10,7 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  /* other config options here */
 };
 
 export default nextConfig;
