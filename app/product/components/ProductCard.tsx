@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import { CircleDollarSign, Package } from "lucide-react";
 
 interface ImagesProduct {
   image_url: string;
@@ -20,62 +21,95 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  className?: string;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  className = "",
+}: ProductCardProps) {
+  const discountPercentage = Math.round(
+    ((product.price - product.discount) / product.price) * 100,
+  );
+
   return (
-    <a
-      href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
-      className="bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300 w-full max-w-xs overflow-hidden">
+    <div
+      className={`group relative flex w-full flex-col overflow-hidden rounded-2xl shadow-md bg-white border border-gray-200
+      h-[230px] md:h-[330px]  ${className}`}>
       {/* Image Container */}
-      <div className="relative aspect-square w-full">
+      <div className="relative h-[200px]  w-full overflow-hidden bg-gray-50">
         <Image
           src={product.images[0]?.image_url || "/placeholder-image.jpg"}
           alt={product.name}
           fill
-          className="object-cover hover:scale-105 transition-transform duration-300"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          priority
+          className="object-cover aspect-square bg-gray-400"
         />
-        {/* Sale Out Badge */}
-        {/* {product.sale_out && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2.5 py-1 rounded">
-            Sold Out
+
+        {/* Discount Tag - Simplified */}
+        {product.discount > 0 && (
+          <span className="absolute left-2 top-2 rounded bg-red-400 px-2 py-0.5 text-[10px] font-medium text-white">
+            -{discountPercentage}%
           </span>
-        )} */}
-        {/* Discount Percentage */}
-        <span className="absolute right-0 bg-red-100 text-red-500 text-xs px-2 py-0.5 rounded">
-          -
-          {Math.round(
-            ((product.price - product.discount) / product.price) * 100,
-          )}
-          %
+        )}
+
+        {/* Category Badge - Simplified */}
+        <span className="absolute bottom-2 left-2 rounded bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+          {product.category}
         </span>
       </div>
-      <hr className="mx-4" />
+
       {/* Product Details */}
-      <div className="p-4 space-y-2">
+      <div className="flex flex-1 flex-col p-3">
         {/* Product Name */}
-        <h4 className="text-lg font-medium text-gray-800 line-clamp-2 min-h-[3rem] text-ellipsis">
-          {product.name}
+        <h4 className="line-clamp-2 text-sm font-medium text-gray-800 mb-2">
+          <a
+            href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
+            className="hover:text-red-500">
+            {product.name}
+          </a>
         </h4>
 
         {/* Price Section */}
-        <div className="flex items-center space-x-2">
-          {product.discount > 0 ? (
-            <>
-              <p className="text-gray-400 line-through text-sm">
+        <div className="flex items-center gap-1.5 mt-auto">
+          <CircleDollarSign className="h-3.5 w-3.5 text-gray-400" />
+          <div className="flex items-center gap-1.5">
+            {product.discount > 0 ? (
+              <>
+                <span className="text-base text-gray-400 line-through">
+                  ฿{product.price.toLocaleString()}
+                </span>
+                <span className="text-base font-semibold text-gray-900">
+                  ฿{product.discount.toLocaleString()}
+                </span>
+              </>
+            ) : (
+              <span className="text-base font-semibold text-gray-900">
                 ฿{product.price.toLocaleString()}
-              </p>
-              <p className="text-red-500 font-semibold">
-                ฿{product.discount.toLocaleString()}
-              </p>
-            </>
-          ) : (
-            <p className="text-gray-800 font-semibold">
-              ฿{product.price.toLocaleString()}
-            </p>
-          )}
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Stock Status - Simplified */}
+        {product.sale_out > 0 && (
+          <div className="flex items-center gap-1.5 mt-1">
+            <Package className="h-3.5 w-3.5 text-gray-400" />
+            <p className="text-xs">
+              {product.sale_out < 10 ? (
+                <span className="text-gray-600">
+                  เหลือ {product.sale_out} ชิ้น
+                </span>
+              ) : (
+                <span className="text-gray-600">
+                  สินค้า {product.sale_out} ชิ้น
+                </span>
+              )}
+            </p>
+          </div>
+        )}
       </div>
-    </a>
+    </div>
   );
 }
