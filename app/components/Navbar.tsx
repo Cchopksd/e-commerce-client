@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { IoSearchOutline } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
@@ -22,7 +22,7 @@ const navOptions: NavOption[] = [
 
 export default function Navbar({ userInfo }: { userInfo: any }) {
   const router = useRouter();
-  const [userImage, setUserImage] = useState<string | null>(
+  const [userImage] = useState<string | null>(
     userInfo?.profile_image,
   );
 
@@ -93,7 +93,7 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
             </button>
 
             {/* Shopping Cart */}
-            <Link
+            <a
               href="/cart"
               className="relative flex items-center hover:opacity-80 transition-opacity">
               <TiShoppingCart className="w-6 h-6 text-gray-600" />
@@ -103,7 +103,7 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
                             bg-black text-white text-xs font-medium rounded-full">
                 6
               </span>
-            </Link>
+            </a>
 
             {/* Login Button */}
             {userImage ? (
