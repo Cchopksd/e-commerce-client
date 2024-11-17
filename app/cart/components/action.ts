@@ -83,7 +83,7 @@ export const addToCart = async (product_id: string, quantity: number) => {
   }
 };
 
-export const decrementOfCart = async (product_id: string, quantity: number) => {
+export const reduceFromCart = async (product_id: string, quantity: number) => {
   const token = await getToken();
   const hostname = process.env.HOST_NAME;
 
@@ -95,7 +95,7 @@ export const decrementOfCart = async (product_id: string, quantity: number) => {
   const user_id = userInfo?.sub;
   try {
     const resource = await fetch(`${hostname}/cart/remove-item`, {
-      method: "DELETE",
+      method: "POST",
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",

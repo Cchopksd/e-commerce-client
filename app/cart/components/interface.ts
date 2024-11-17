@@ -15,7 +15,6 @@ export interface Product {
   sale_out: number;
   createdAt: string;
   updatedAt: string;
-  __v: number;
 }
 
 export interface CartItem {
@@ -26,13 +25,24 @@ export interface CartItem {
   quantity: number;
   createdAt: string;
   updatedAt: string;
-  __v: number;
+}
+
+export interface User {
+  _id: string;
+  email: string;
+  password: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  age: number;
+  role: string;
 }
 
 export interface Address {
   _id: string;
   name: string;
-  user_id: string;
+  user_id: User;
   province: string;
   district: string;
   subdistrict: string;
@@ -41,7 +51,6 @@ export interface Address {
   default: boolean;
   createdAt: string;
   updatedAt: string;
-  __v: number;
 }
 
 export interface CartWithAddress {

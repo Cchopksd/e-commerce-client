@@ -105,29 +105,30 @@ export default function Summary({
             </p>
           </div>
         </div>
-
-        <motion.button
-          initial={{
-            background: "#FFFFFF", // สีเริ่มต้น: ส้ม
-            color: "#000", // ข้อความสีขาว
-          }}
-          whileHover={{
-            background: "#F97316", // ไล่สีจากส้มไปขาว
-            color: "#FFFFFF", // ข้อความสีดำเมื่อ hover
-          }}
-          transition={{
-            duration: 0.5, // ระยะเวลาการเปลี่ยนสีเมื่อ hover
-          }}
-          whileTap={{
-            scale: 0.95, // ลดขนาดเล็กลงเมื่อกดปุ่ม
-          }}
-          className="w-full mt-6 py-3 rounded-md font-semibold"
-          style={{
-            border: "none",
-            cursor: "pointer",
-          }}>
-          <a href="/checkout">Proceed to Checkout</a>
-        </motion.button>
+        <a href="/checkout">
+          <motion.button
+            initial={{
+              background: "#FFFFFF", // สีเริ่มต้น: ส้ม
+              color: "#000", // ข้อความสีขาว
+            }}
+            whileHover={{
+              background: "#F97316", // ไล่สีจากส้มไปขาว
+              color: "#FFFFFF", // ข้อความสีดำเมื่อ hover
+            }}
+            transition={{
+              duration: 0.5, // ระยะเวลาการเปลี่ยนสีเมื่อ hover
+            }}
+            whileTap={{
+              scale: 0.95, // ลดขนาดเล็กลงเมื่อกดปุ่ม
+            }}
+            className="w-full mt-6 py-3 rounded-md font-semibold"
+            style={{
+              border: "none",
+              cursor: "pointer",
+            }}>
+            Proceed to Checkout
+          </motion.button>
+        </a>
       </div>
     </div>
   );
