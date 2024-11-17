@@ -13,6 +13,6 @@ export default async function fetchTrendingProduct() {
     }
     return result;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
