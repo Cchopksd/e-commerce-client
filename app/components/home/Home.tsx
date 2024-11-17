@@ -8,6 +8,7 @@ import CouponImage from "@/public/icons/cat/ticket.png";
 import SaleImage from "@/public/icons/cat/hot-sale.png";
 import BannerImage from "@/public/images/banner/product1.png";
 import ProductWithCategory from "../ProductWithCategory";
+import { ArrowRight } from "lucide-react";
 
 export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
   const buttons = [
@@ -63,7 +64,7 @@ export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
         <h2>Shop our top categories</h2>
         <div></div>
       </section>
-      <section className="w-full max-w-[1440px] m-auto relative py-10 ">
+      <section className="w-full max-w-[1440px] m-auto relative py-10 px-4">
         <p className="">Popular Products</p>
         <h2 className="">Trending Now</h2>
         <div className="flex gap-4 py-10  w-full">
@@ -72,25 +73,40 @@ export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
         </div>
       </section>
 
-      <section className="relative w-full max-w-[1440px] py-10 p-4 aspect-[19/9] m-auto">
-        <Image
-          src={BannerImage}
-          alt="product image"
-          className="relative max-h-[600px] w-full object-cover shadow-lg rounded-2xl "
-        />
-        <div className="bg-[#013d28] top-0 translate-y-1/2 right-20 p-14 m-10 absolute w-1/3 h-auto space-y-6">
-          <h2 className="text-white">
-            Get 5% Cash back on <br />฿ 200
-          </h2>
-          <p className="text-white">
-            Shopping is a bit of a relaxing hobby for me, which is sometimes
-            troubling for the bank balance.
-          </p>
+      <section className="relative w-full max-w-[1440px] mx-auto px-4 py-8 md:py-12 lg:py-16">
+        <div className="relative aspect-[16/9] md:aspect-[19/9] w-full">
+          <Image
+            src={BannerImage}
+            alt="Elegant shopping display"
+            className="w-full h-full object-cover rounded-lg md:rounded-2xl shadow-xl"
+          />
+
+          {/* Overlay Card */}
+          <div
+            className="absolute top-1/2 right-0 transform translate-y-[-50%] p-6 md:p-8 lg:p-12 bg-[#013d28] 
+                        w-[90%] md:w-[450px] m-4 md:m-8 lg:m-12 rounded-lg shadow-2xl
+                        backdrop-blur-sm bg-opacity-95">
+            <div className="space-y-4 md:space-y-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
+                Get 5% Cash Back
+                <br />
+                on ฿200
+              </h2>
+              <p className="text-gray-100 text-sm md:text-base lg:text-lg">
+                Shopping is a bit of a relaxing hobby for me, which is sometimes
+                troubling for the bank balance.
+              </p>
+              <button
+                className="inline-flex items-center gap-2 bg-white text-[#013d28] px-6 py-3 rounded-full
+                              font-semibold transition-all hover:bg-gray-100 hover:scale-105">
+                Shop Now <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="w-full max-w-[1440px] py-10 px-4 m-auto">
-        <h2>Todays Best Deals for you!</h2>
         <ProductWithCategory trendingProduct={trendingProduct} />
       </section>
     </>
