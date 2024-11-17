@@ -20,16 +20,11 @@ const navOptions: NavOption[] = [
   { name: "Contact", path: "/contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ userInfo }: { userInfo: any }) {
   const router = useRouter();
-  const [userImage, setUserImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const userInfoString = localStorage.getItem("user-payload");
-    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-
-    setUserImage(userInfo?.profile_image || null);
-  }, []);
+  const [userImage, setUserImage] = useState<string | null>(
+    userInfo?.profile_image,
+  );
 
   const [keywords, setKeywords] = useState<string>("");
 
@@ -41,10 +36,10 @@ export default function Navbar() {
 
   return (
     <div className="h-20">
-      <nav className="w-full fixed top-0 z-50 bg-white backdrop-blur-sm shadow-sm">
-        <div className="flex w-full max-w-[1440px] mx-auto justify-between items-center py-4 px-4 md:px-10">
+      <nav className="w-full fixed flex items-center h-20 top-0 z-50 bg-white backdrop-blur-sm shadow-sm">
+        <div className="w-full max-w-[1440px] grid grid-cols-[auto_auto] md:grid-cols-[auto_auto_auto]  items-center place-items-center m-auto py-4 px-4 md:px-10">
           {/* Left Section - Navigation Links */}
-          <section className="hidden md:flex">
+          <section className="hidden md:flex lg:justify-self-start">
             <ul className="flex gap-6 md:gap-10">
               {navOptions.map((item: NavOption, index: number) => (
                 <li key={index}>
@@ -59,7 +54,7 @@ export default function Navbar() {
           </section>
 
           {/* Center Section - Logo */}
-          <section className="flex justify-center lg:flex-1">
+          <section className="flex justify-center lg:flex-1 justify-self-start lg:justify-self-center">
             <Link
               href="/"
               className="text-xl font-bold tracking-wider hover:opacity-80 transition-opacity text-center">
@@ -68,13 +63,13 @@ export default function Navbar() {
           </section>
 
           {/* Right Section - Search, Cart, Login */}
-          <section className="flex items-center gap-4 md:gap-10">
+          <section className="flex items-center gap-4 md:gap-10 justify-self-end lg:">
             {/* Search Bar */}
             <div className="relative hidden md:block">
               <input
                 type="text"
                 value={keywords}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   setKeywords(e.target.value);
                 }}
                 onKeyDown={handleKeyDown}
@@ -116,7 +111,7 @@ export default function Navbar() {
                 <Image
                   src={userImage}
                   alt="avatar"
-                  className="w-full h-full rounded-full  shadow-md p-1"
+                  className="w-10 h-10 rounded-full  shadow-md p-1"
                   width={18}
                   height={18}
                 />
