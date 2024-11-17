@@ -2,14 +2,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { FaCheckCircle, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 import Modal from "../components/Modal";
 import { login } from "./components/action";
 import { BiCheckCircle } from "react-icons/bi";
 
 export default function Page() {
-  const router = useRouter();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
@@ -45,10 +44,7 @@ export default function Page() {
           result: "Login failed: Invalid credentials",
         }));
       }
-
-      localStorage.setItem("user-payload", JSON.stringify(response.payload));
-
-      router.push("/");
+      window.location.href = "/";
     } catch (error: any) {
       console.error("Login error:", error);
       setErrMessage((prev) => ({
@@ -71,7 +67,7 @@ export default function Page() {
                 type="text"
                 id="email"
                 value={email}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   setEmail(e.target.value);
                 }}
                 className="border-1 rounded-md w-full h-full px-2 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
@@ -88,7 +84,7 @@ export default function Page() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 value={password}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   setPassword(e.target.value);
                 }}
                 className="border-1 rounded-md w-full h-full px-2 pr-10 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
