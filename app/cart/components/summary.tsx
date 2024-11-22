@@ -60,7 +60,7 @@ export default function Summary({
 
           <div className="flex items-center gap-2 mt-4 text-sm text-gray-600">
             <Info size={16} className="shrink-0 text-orange-600" />
-            <p>We'll deliver your order to this address</p>
+            <p>We&apos;ll deliver your order to this address</p>
           </div>
         </div>
       </div>

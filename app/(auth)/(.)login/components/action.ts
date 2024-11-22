@@ -11,22 +11,21 @@ interface LoginResult {
   access_token: string;
 }
 
-interface LoginResponse {
-  result: LoginResult;
-  payload: any;
-}
-
-export async function login({ email, password }: Form): Promise<LoginResponse> {
+export async function login({ email, password }: Form) {
   const HOST = process.env.HOST_NAME;
   try {
     const response = await fetch(`${HOST}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store",
       },
       credentials: "include",
       body: JSON.stringify({ email, password }),
+    });
+
+    console.log("Response Headers:", {
+      "Set-Cookie": response.headers.get("set-cookie"),
+      "Content-Type": response.headers.get("content-type"),
     });
 
     if (!response.ok) {
@@ -43,7 +42,7 @@ export async function login({ email, password }: Form): Promise<LoginResponse> {
     cookiesInstance.set("user-token", result.access_token);
 
     return { result, payload }; // Return both result and payload
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Error during login:", error);
     throw new Error(`Login failed: ${error.message || error}`); // Wrapping the error with more context
   }

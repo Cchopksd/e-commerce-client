@@ -1,18 +1,24 @@
 "use server";
-import { jwtVerify } from "jose";
+import { jwtVerify, JWTPayload } from "jose";
 import { cookies } from "next/headers";
 
-export const decryptToken = async (token: string) => {
+export interface DecodedToken extends JWTPayload {
+  email: string;
+  sub: string;
+}
+
+export const decryptToken = async (
+  token: string,
+): Promise<DecodedToken | undefined> => {
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
     if (token) {
       const { payload } = await jwtVerify(token, secret);
-      return payload;
+      return payload as DecodedToken;
     }
   } catch (error) {
     console.error("Token decryption error:", error);
-    return "";
+    return undefined; 
   }
 };
 

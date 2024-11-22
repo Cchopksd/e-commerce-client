@@ -16,13 +16,39 @@ import Image from "next/image";
 
 import thaiQR from "/public/icons/payment/thaiQR.png";
 import { CartWithAddress } from "@/app/cart/components/interface";
+import { payWithPromptPay } from "./action";
 
 const PaymentMethods = ({ product }: { product: CartWithAddress }) => {
   const address = product.address;
-  const [selectedPayment, setSelectedPayment] = useState("credit-card");
+  const [selectedPayment, setSelectedPayment] = useState("");
   const [selectedCard, setSelectedCard] = useState("");
   const [showNewCardForm, setShowNewCardForm] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+
+  const [paymentResult, setPaymentResult] = useState<any>();
+
+  const checkoutItem = async () => {
+    if (selectedPayment === "PromptPay") {
+      try {
+        const result = await payWithPromptPay({
+          type: "promptpay",
+          currency: "THB",
+          address: address._id,
+        });
+
+        if (result) {
+          setPaymentResult(result);
+          console.log("Payment successful:", result);
+        } else {
+          console.error("Payment failed or no response received.");
+        }
+      } catch (error) {
+        console.error("An error occurred during the payment process:", error);
+      }
+    } else {
+      console.warn("Selected payment method is not supported.");
+    }
+  };
 
   const paymentMethods = [
     {
@@ -399,63 +425,84 @@ const PaymentMethods = ({ product }: { product: CartWithAddress }) => {
         );
       case 3:
         return (
-          <div className="space-y-8">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                  ตรวจสอบข้อมูล
-                </h3>
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-medium text-gray-700 mb-2">
-                      ข้อมูลการจัดส่ง
-                    </h4>
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                      <p className="text-sm text-gray-600">
-                        ชื่อ-นามสกุล: John Doe
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        ที่อยู่: 123 ถนนสุขุมวิท
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        เบอร์โทร: 081-234-5678
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        อีเมล: john@example.com
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-700 mb-2">
-                      วิธีการชำระเงิน
-                    </h4>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-center">
-                        <CreditCard className="w-5 h-5 text-gray-400 mr-3" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            Visa ****4242
+          <>
+            {!paymentResult ? (
+              <div className="space-y-8">
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-6">
+                      ตรวจสอบข้อมูล
+                    </h3>
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-2">
+                          ข้อมูลการจัดส่ง
+                        </h4>
+                        <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                          <p className="text-sm text-gray-600">
+                            ชื่อ-นามสกุล: John Doe
                           </p>
-                          <p className="text-sm text-gray-600">หมดอายุ 12/25</p>
+                          <p className="text-sm text-gray-600">
+                            ที่อยู่: 123 ถนนสุขุมวิท
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            เบอร์โทร: 081-234-5678
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            อีเมล: john@example.com
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-2">
+                          วิธีการชำระเงิน
+                        </h4>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <div className="flex items-center">
+                            <CreditCard className="w-5 h-5 text-gray-400 mr-3" />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                Visa ****4242
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                หมดอายุ 12/25
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <OrderSummary />
+                </div>
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={() => setCurrentStep(currentStep - 1)}
+                    className="px-6 py-2.5 text-gray-600 hover:text-gray-800 transition duration-200">
+                    ย้อนกลับ
+                  </button>
+                  <button
+                    onClick={checkoutItem}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
+                    ยืนยันการสั่งซื้อ
+                  </button>
                 </div>
               </div>
-              <OrderSummary />
-            </div>
-            <div className="flex justify-between items-center">
-              <button
-                onClick={() => setCurrentStep(currentStep - 1)}
-                className="px-6 py-2.5 text-gray-600 hover:text-gray-800 transition duration-200">
-                ย้อนกลับ
-              </button>
-              <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
-                ยืนยันการสั่งซื้อ
-              </button>
-            </div>
-          </div>
+            ) : (
+              <>
+                <div className="w-full h-full max-w-20">
+                  {" "}
+                  <Image
+                    src={paymentResult.image}
+                    alt="promptPay"
+                    width={100}
+                    height={100}
+                    className="w-20 h-20"
+                  />
+                </div>
+              </>
+            )}
+          </>
         );
       default:
         return null;
