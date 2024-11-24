@@ -9,6 +9,7 @@ import SaleImage from "@/public/icons/cat/hot-sale.png";
 import BannerImage from "@/public/images/banner/product1.png";
 import ProductWithCategory from "../ProductWithCategory";
 import { ArrowRight } from "lucide-react";
+import TopCategories from "../Category";
 
 export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
   const buttons = [
@@ -16,53 +17,98 @@ export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
       image: ProductImage,
       alt: "Product image",
       text: "All Products",
+      description: "Browse our complete collection", // optional
     },
     {
       image: CouponImage,
       alt: "Coupon image",
       text: "Coupons",
+      description: "Save big with special offers", // optional
     },
     {
       image: SaleImage,
       alt: "Sale image",
       text: "Hot Sale",
+      description: "Don't miss out on deals", // optional
     },
   ];
 
   return (
     <>
-      <section className="w-full mx-auto p-4 md:py-8">
+      <section className="w-full max-w-[1440px] mx-auto p-4 md:py-8">
         <Banner />
       </section>
 
-      <section className="w-full max-w-[1440px] flex gap-10 px-8 py-8 p-4">
-        {buttons.map((button, index) => (
-          <button
-            key={index}
-            className="relative w-full h-12 bg-gray-50 hover:bg-[#ffdfc6] text-black font-medium px-6 rounded-[40px] shadow-lg border-2
-          border-[#e2711d] transition-all duration-200">
-            <div className="absolute w-14 h-14 top-1/2 -translate-y-1/2 -left-5">
-              <Image
-                src={button.image}
-                alt={button.alt}
-                fill
-                className="-rotate-12 object-contain"
-              />
-            </div>
-            <span className="font-semibold">{button.text}</span>
-          </button>
-        ))}
+      <section className="w-full max-w-[1440px] mx-auto px-4 py-6 md:py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {buttons.map((button, index) => (
+            <button
+              key={index}
+              className="group relative w-full h-20 md:h-24 bg-white hover:bg-orange-50 
+                     rounded-2xl overflow-hidden transition-all duration-300
+                     border border-orange-100 hover:border-orange-200
+                     shadow-sm hover:shadow-md">
+              {/* Decorative Background Pattern */}
+              <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent" />
+                <div className="h-full w-full bg-[linear-gradient(45deg,transparent_25%,rgba(68,68,68,.2)_50%,transparent_75%,transparent_100%)] bg-[length:250px_250px]" />
+              </div>
 
-        {/* <button className="">
-          <Image src={couponImage} alt={"coupon image"} width={0} height={0} />
-        </button>
-        <button className="">
-          <Image src={saleImage} alt={"sale image"} width={0} height={0} />
-        </button> */}
+              {/* Content Container */}
+              <div className="relative h-full flex items-center justify-center gap-4 px-6">
+                {/* Image Container */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-16 md:w-20 h-16 md:h-20 relative">
+                    <Image
+                      src={button.image}
+                      alt={button.alt}
+                      fill
+                      className="object-contain transform group-hover:scale-110 group-hover:-rotate-6 
+                             transition-transform duration-300 ease-out"
+                    />
+                  </div>
+                </div>
+
+                {/* Text Container */}
+                <div className="flex-grow text-left">
+                  <span
+                    className="text-lg md:text-xl font-semibold text-gray-800 group-hover:text-orange-600
+                              transition-colors duration-200">
+                    {button.text}
+                  </span>
+
+                  {/* Optional Description */}
+                  <p className="text-sm text-gray-500 mt-1 hidden md:block">
+                    {button.description ||
+                      `Explore our ${button.text.toLowerCase()}`}
+                  </p>
+                </div>
+
+                {/* Arrow Icon */}
+                <div
+                  className="ml-2 opacity-0 group-hover:opacity-100 transform translate-x-2 
+                          group-hover:translate-x-0 transition-all duration-300">
+                  <svg
+                    className="w-6 h-6 text-orange-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
       </section>
-      <section className="w-full max-w-[1440px] py-10 p-4">
-        <h2>Shop our top categories</h2>
-        <div></div>
+
+      <section className="w-full max-w-[1440px] mx-auto py-10 p-4">
+        <TopCategories />
       </section>
       <section className="w-full max-w-[1440px] m-auto relative py-10 px-4">
         <p className="">Popular Products</p>
