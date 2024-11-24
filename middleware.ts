@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest, response: NextResponse) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const token = request.cookies.get("user-token");
 
@@ -11,6 +11,15 @@ export async function middleware(request: NextRequest, response: NextResponse) {
 
   if (pathname === "/cart" && !token) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (pathname.startsWith("/profile")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (pathname === "/profile") {
+      return NextResponse.redirect(new URL("/profile/account", request.url));
+    }
   }
 
   return NextResponse.next();

@@ -1,4 +1,3 @@
-"use server";
 import { jwtVerify, JWTPayload } from "jose";
 import { cookies } from "next/headers";
 
@@ -8,7 +7,7 @@ export interface DecodedToken extends JWTPayload {
 }
 
 export const decryptToken = async (
-  token: string,
+  token: string | null,
 ): Promise<DecodedToken | undefined> => {
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -18,7 +17,7 @@ export const decryptToken = async (
     }
   } catch (error) {
     console.error("Token decryption error:", error);
-    return undefined; 
+    return undefined;
   }
 };
 

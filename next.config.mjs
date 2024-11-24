@@ -11,15 +11,6 @@ const nextConfig = {
       },
     ],
   },
-
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "http://127.0.0.1:3000/api/:path*", // สมมติว่า NestJS รันที่พอร์ต 3000
-      },
-    ];
-  },
 };
 
 export default nextConfig;

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import { login } from "@/app/(auth)/(.)login/components/action";
+import { login } from "@/app/(auth)/(...)login/components/action";
 import { BiCheckCircle } from "react-icons/bi";
 
 export default function Page() {

@@ -5,11 +5,6 @@ export const fetchCartByID = async () => {
   const token = await getToken();
   const hostname = process.env.HOST_NAME;
 
-  if (!token || !hostname) {
-    console.error("Missing token or hostname");
-    return [];
-  }
-
   const userInfo = await decryptToken(token);
   const user_id = userInfo?.sub;
 

@@ -6,7 +6,6 @@ import ReduxProvider from "./store-provider";
 import { Merriweather } from "next/font/google";
 import { decryptToken, getToken } from "./utils/token";
 import Footer from "./components/Footer";
-import { AuthProvider } from "./auth-provider";
 
 const merriweather = Merriweather({
   subsets: ["latin"],
@@ -24,22 +23,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const userToken = await getToken();
+  let userToken = null;
+  userToken = await getToken();
 
   const userInfo = userToken ? await decryptToken(userToken) : null;
 
   return (
-    <AuthProvider>
       <ReduxProvider>
         <html lang="en">
           <body className={`${merriweather.className} antialiased`}>
-            {/* ส่งข้อมูล userInfo ไปที่ Navbar */}
             <Navbar userInfo={userInfo} />
             {children}
             <Footer />
           </body>
         </html>
       </ReduxProvider>
-    </AuthProvider>
   );
 }

@@ -19,13 +19,9 @@ export async function login({ email, password }: Form) {
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
       credentials: "include",
       body: JSON.stringify({ email, password }),
-    });
-
-    console.log("Response Headers:", {
-      "Set-Cookie": response.headers.get("set-cookie"),
-      "Content-Type": response.headers.get("content-type"),
     });
 
     if (!response.ok) {
@@ -35,15 +31,27 @@ export async function login({ email, password }: Form) {
     }
 
     const result: LoginResult = await response.json();
+
     const payload = await decryptToken(result.access_token);
 
-    // Store the access token in cookies
-    const cookiesInstance = await cookies(); // Ensure cookies() is available
-    cookiesInstance.set("user-token", result.access_token);
-
-    return { result, payload }; // Return both result and payload
+    setAuthCookie(response);
+    return { result, payload };
   } catch (error: any) {
     console.error("Error during login:", error);
-    throw new Error(`Login failed: ${error.message || error}`); // Wrapping the error with more context
+    throw new Error(`Login failed: ${error.message || error}`);
   }
 }
+
+const setAuthCookie = (response: Response) => {
+  const setCookieHeader = response.headers.get("set-Cookie");
+  if (setCookieHeader) {
+    const token = setCookieHeader.split(";")[0].split("=")[1];
+    cookies().set("user-token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+  }
+};
