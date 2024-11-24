@@ -15,6 +15,26 @@ import {
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300">
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white">
+            รับข่าวสารและโปรโมชั่น
+          </h2>
+          <p className="mt-4 text-lg text-white">
+            ลงทะเบียนเพื่อรับข่าวสารเกี่ยวกับสินค้าใหม่และโปรโมชั่นพิเศษ
+          </p>
+          <div className="mt-8 flex justify-center">
+            <input
+              type="email"
+              placeholder="อีเมลของคุณ"
+              className="w-full max-w-xs px-4 py-2 rounded-l-md border-gray-300"
+            />
+            <button className="bg-gray-900 text-white px-6 py-2 rounded-r-md hover:bg-gray-800">
+              ลงทะเบียน
+            </button>
+          </div>
+        </div>
+      </div>
       {/* Main Footer Content */}
       <div className="max-w-[1440px] mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
