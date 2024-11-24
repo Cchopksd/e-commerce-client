@@ -33,6 +33,7 @@ export default function ProductContent({ product, token }: Product) {
 
   const { value } = useAppSelector((state) => state.cart);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [isAdding, setIsAdding] = React.useState(false);
   const images: string[] = [];
 
   product.images.map((items) => {
@@ -43,6 +44,8 @@ export default function ProductContent({ product, token }: Product) {
     ((product.price - product.discount) / product.price) * 100,
   );
 
+  const isSoldOut = product.amount <= 0;
+
   const handleCartSubmit = async () => {
     if (value <= 0) {
       return;
@@ -51,122 +54,160 @@ export default function ProductContent({ product, token }: Product) {
       window.location.href = "/login";
     }
 
+    setIsAdding(true);
     try {
       const result = await addToCart(token, product._id, value);
       console.log(result);
     } catch (error) {
       console.error("Cart submission error:", error);
+    } finally {
+      setTimeout(() => {
+        setIsAdding(false);
+      }, 1000);
     }
   };
 
   return (
-    <div className="mx-auto p-6">
-      <div className="grid md:grid-cols-2 gap-20">
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         {/* Image Section */}
         <div className="space-y-4">
-          <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-50">
+          <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 border">
+            {isSoldOut && (
+              <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+                <span className="px-4 py-2 bg-red-500 text-white font-bold rounded-lg">
+                  สินค้าหมด
+                </span>
+              </div>
+            )}
             <Image
               src={images[currentImageIndex]}
-              alt={`Product B - Image ${currentImageIndex + 1}`}
-              className="object-cover w-full h-auto "
+              alt={`Product - Image ${currentImageIndex + 1}`}
+              className={`object-contain w-full h-full p-4 ${isSoldOut ? 'opacity-75' : ''}`}
               fill
+              priority
             />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-2">
             {images.map((img, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
-                className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                  currentImageIndex === idx
-                    ? "border-blue-500"
-                    : "border-transparent"
-                }`}>
-                <div className="w-full h-full relative aspect-square overflow-hidden">
-                  <Image
-                    src={img}
-                    alt={`Thumbnail ${idx + 1}`}
-                    className="object-cover w-full h-auto"
-                    fill
-                  />
-                </div>
+                className={`relative aspect-square rounded-lg overflow-hidden border-2 
+                  ${currentImageIndex === idx 
+                    ? 'border-blue-500 ring-2 ring-blue-200' 
+                    : 'border-gray-200 hover:border-gray-300'
+                  } transition-all duration-200`}>
+                <Image
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  className="object-contain p-1"
+                  fill
+                />
               </button>
             ))}
           </div>
         </div>
 
         {/* Product Info Section */}
-        <div className="space-y-6 py-10">
+        <div className="space-y-6">
           <div>
-            <div className="mb-2 flex">
-              <div className="block bg-neutral-100 px-3 shadow-sm rounded-lg text-sm">
+            <div className="mb-3">
+              <span className="px-3 py-1 text-sm font-medium bg-gray-100 rounded-full">
                 {product.category}
-              </div>
+              </span>
             </div>
-            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {product.discount ? (
                 <>
-                  {/* Discounted Price and Original Price */}
-                  <span className="text-3xl font-bold text-red-600">
-                    ฿{product.discount}
+                  <span className={`text-3xl font-bold ${isSoldOut ? 'text-gray-400' : 'text-red-600'}`}>
+                    ฿{product.discount.toLocaleString()}
                   </span>
-                  <span className="text-xl text-gray-500 line-through">
-                    ฿{product.price}
+                  <span className="text-xl text-gray-400 line-through">
+                    ฿{product.price.toLocaleString()}
                   </span>
-                  <div className="text-[10px] text-white font-semibold bg-red-500 py-1 px-2 rounded-md">
+                  <span className={`px-2 py-1 text-xs font-semibold text-white rounded-md
+                    ${isSoldOut ? 'bg-gray-400' : 'bg-red-500'}`}>
                     {discountPercentage}% OFF
-                  </div>
+                  </span>
                 </>
               ) : (
-                // Only Original Price when no discount is available
-                <span className="text-3xl font-bold text-gray-900">
-                  ฿{product.price}
+                <span className={`text-3xl font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                  ฿{product.price.toLocaleString()}
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500">
-              {product.amount} available | {product.sale_out} sold
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              {isSoldOut ? (
+                <span className="text-red-500 font-medium">Out of Stock</span>
+              ) : (
+                <span>{product.amount} available</span>
+              )}
+              <span>•</span>
+              <span>{product.sale_out} sold</span>
             </p>
           </div>
-          <hr />
-          <div>
-            <div className="p-4 shadow-sm border rounded-lg bg-gray-50">
-              <p className="text-gray-700">{product.detail}</p>
+
+          <div className="border-t border-b py-6 space-y-4">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-700 leading-relaxed">{product.detail}</p>
             </div>
           </div>
-          <hr />
-          <div className="space-y-4">
+
+          <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium">Quantity:</span>
-              <div className="flex items-center gap-2">
+              <span className="text-gray-700 font-medium">Quantity</span>
+              <div className="flex items-center">
                 <button
                   onClick={() => dispatch(decrement(1))}
-                  disabled={value <= 1}
-                  className="shadow-sm p-1 rounded-md border">
+                  disabled={value <= 1 || isSoldOut}
+                  className={`p-2 rounded-l-lg border 
+                    ${(value <= 1 || isSoldOut) 
+                      ? 'bg-gray-50 text-gray-400' 
+                      : 'hover:bg-gray-50 active:bg-gray-100'
+                    }`}>
                   <LuMinus className="h-4 w-4" />
                 </button>
-                <span className="w-12 text-center">{value}</span>
+                <div className="w-16 text-center border-t border-b py-2">
+                  {isSoldOut ? 0 : value}
+                </div>
                 <button
                   onClick={() => dispatch(increment(1))}
-                  disabled={value >= product.amount}
-                  className="shadow-sm p-1 rounded-md border">
+                  disabled={value >= product.amount || isSoldOut}
+                  className={`p-2 rounded-r-lg border 
+                    ${(value >= product.amount || isSoldOut)
+                      ? 'bg-gray-50 text-gray-400' 
+                      : 'hover:bg-gray-50 active:bg-gray-100'
+                    }`}>
                   <LuPlus className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            <section className="w-full">
-              <button
-                onClick={handleCartSubmit}
-                className="w-full flex justify-center gap-4 bg-black text-white p-2 shadow-sm rounded-lg">
-                <LuShoppingCart className="mr-2 h-5 w-5" />
-                Add to Cart
-              </button>
-            </section>
+            <button
+              onClick={handleCartSubmit}
+              disabled={isAdding || value <= 0 || isSoldOut}
+              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg
+                font-medium transition-all duration-300 
+                ${isSoldOut 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : isAdding 
+                    ? 'bg-green-500 text-white scale-95' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}>
+              <LuShoppingCart 
+                className={`h-5 w-5 ${isAdding ? 'animate-bounce' : ''}`} 
+              />
+              {isSoldOut 
+                ? 'Out of Stock' 
+                : isAdding 
+                  ? 'Added to Cart!' 
+                  : 'Add to Cart'}
+            </button>
           </div>
         </div>
       </div>

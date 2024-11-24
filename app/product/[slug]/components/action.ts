@@ -2,20 +2,34 @@
 
 import { decryptToken } from "@/app/utils/token";
 
-export const fetchProductByID = async (id: string | undefined) => {
+export const fetchProductByID = async ({
+  product_id,
+  user_id,
+}: {
+  product_id: string;
+  user_id: string | null;
+}) => {
   const hostname = process.env.HOST_NAME;
   try {
-    const resource = await fetch(`${hostname}/product/get-by-id/${id}`, {
-      method: "GET",
+    const resource = await fetch(`${hostname}/product/by-id`, {
+      method: "POST",
       cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        product_id,
+        user_id,
+      }),
     });
     const result = await resource.json();
     if (!resource.ok) {
-      console.log("Something went wrong");
+      throw new Error(`HTTP error! status: ${resource.status}`);
     }
     return result;
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching product:", error);
+    throw error;
   }
 };
 
@@ -43,10 +57,11 @@ export const addToCart = async (
     });
     const result = await resource.json();
     if (!resource.ok) {
-      console.log("Something went wrong");
+      throw new Error(`HTTP error! status: ${resource.status}`);
     }
     return result;
   } catch (error) {
     console.error("Error adding to cart:", error);
+    throw error;
   }
 };
