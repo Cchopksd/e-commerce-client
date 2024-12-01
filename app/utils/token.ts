@@ -3,7 +3,14 @@ import { cookies } from "next/headers";
 
 export interface DecodedToken extends JWTPayload {
   email: string;
+  first_name: string;
+  last_name: string;
+  username: string;
   sub: string;
+  profile_picture: string;
+  role: string;
+  iat: number;
+  exp: number;
 }
 
 export const decryptToken = async (

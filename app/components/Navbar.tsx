@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
@@ -58,6 +58,12 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuRef]);
+
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin-dashboard")) {
+    return null;
+  }
 
   return (
     <div className="h-20">

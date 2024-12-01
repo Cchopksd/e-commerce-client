@@ -37,6 +37,7 @@ export interface User {
   phone: string;
   age: number;
   role: string;
+  profile_image: string;
 }
 
 export interface Address {

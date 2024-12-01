@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactEventHandler } from "react";
+import React from "react";
 
 import { IoIosArrowBack, IoIosArrowForward, IoIosMore } from "react-icons/io";
 
@@ -28,7 +28,7 @@ export default function Pagination({
 
     // Calculate start and end of visible pages
     let start = Math.max(2, currentPage - Math.floor(maxVisible / 2));
-    let end = Math.min(totalPages - 1, start + maxVisible - 3);
+    const end = Math.min(totalPages - 1, start + maxVisible - 3);
 
     // Adjust start if we're near the end
     if (end === totalPages - 1) {

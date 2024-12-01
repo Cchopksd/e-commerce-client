@@ -8,7 +8,6 @@ import { login } from "./components/action";
 import { BiCheckCircle } from "react-icons/bi";
 
 export default function Page() {
-
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -36,14 +35,9 @@ export default function Page() {
 
     try {
       const response = await login({ email, password });
-
-      if (response.result && response.result.access_token === undefined) {
-        return setErrMessage((prev) => ({
-          ...prev,
-          result: "Login failed: Invalid credentials",
-        }));
+      if (response.statusCode === 200) {
+        window.location.href = "/";
       }
-      window.location.href = "/";
     } catch (error: any) {
       console.error("Login error:", error);
       setErrMessage((prev) => ({

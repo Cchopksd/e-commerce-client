@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   CreditCard,
@@ -11,8 +12,15 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin-dashboard")) {
+    return null;
+  }
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">

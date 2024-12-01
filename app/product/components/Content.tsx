@@ -9,7 +9,7 @@ export default function Content({
   search,
 }: {
   resourceProduct: any;
-  search:any;
+  search: any;
 }) {
   const totalProduct = resourceProduct.total_items;
   const totalPages = resourceProduct.total_page;
