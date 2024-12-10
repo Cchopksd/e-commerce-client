@@ -6,7 +6,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import Image from "next/image";
-import UserMenu from "./UserMenu";
+import UserMenu from "../UserMenu";
 
 interface NavOption {
   name: string;
@@ -20,17 +20,13 @@ const navOptions: NavOption[] = [
   { name: "Contact", path: "/contact" },
 ];
 
-const userMenu: NavOption[] = [
-  { name: "Profile", path: "/profile" },
-  { name: "Logout", path: "/logout" },
-];
+const userMenu: NavOption[] = [{ name: "Profile", path: "/profile" }];
 
 export default function Navbar({ userInfo }: { userInfo: any }) {
   const router = useRouter();
 
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const [userImage] = useState<string>(userInfo?.profile_image);
   const [keywords, setKeywords] = useState<string>("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -67,7 +63,7 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
 
   return (
     <div className="h-20">
-      <nav className="w-full fixed top-0 z-50 bg-[#fef7f2] shadow-sm">
+      <nav className="w-full fixed top-0 z-50 bg-white shadow-sm">
         {/* Main Navbar */}
         <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-8">
           <div className="h-20 flex items-center">
@@ -152,9 +148,9 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="relative group">
                   <Image
-                    src={userImage}
+                    src={userInfo?.profile_image}
                     alt="avatar"
-                    className="w-10 h-10 rounded-full shadow-md p-1 cursor-pointer
+                    className="w-10 h-10 rounded-full shadow-md p-1 cursor-pointer bg-white
                              ring-2 ring-transparent hover:ring-black/20 transition-all duration-200"
                     width={40}
                     height={40}

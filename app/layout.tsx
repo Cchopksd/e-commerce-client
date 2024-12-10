@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import ReduxProvider from "./store-provider";
-
 import { Merriweather } from "next/font/google";
-import { decryptToken, getToken } from "./utils/token";
+
+import ReduxProvider from "./store-provider";
 import Footer from "./components/Footer";
+import Navbar from "./components/navbar/NavbarMain";
 
 const merriweather = Merriweather({
   subsets: ["latin"],
@@ -20,23 +19,21 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  auth,
 }: Readonly<{
   children: React.ReactNode;
+  auth: React.ReactNode;
 }>) {
-  let userToken = null;
-  userToken = await getToken();
-
-  const userInfo = userToken ? await decryptToken(userToken) : null;
-
   return (
-      <ReduxProvider>
-        <html lang="en">
-          <body className={`${merriweather.className} antialiased`}>
-            <Navbar userInfo={userInfo} />
-            {children}
-            <Footer />
-          </body>
-        </html>
-      </ReduxProvider>
+    <ReduxProvider>
+      <html lang="en">
+        <body className={`${merriweather.className} antialiased`}>
+          <Navbar />
+          {auth}
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </ReduxProvider>
   );
 }

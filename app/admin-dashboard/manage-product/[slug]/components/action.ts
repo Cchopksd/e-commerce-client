@@ -33,7 +33,7 @@ export const updateProduct = async (id: string, formData: FormData) => {
     const response = await fetch(
       `${process.env.HOST_NAME}/product/update/${id}`,
       {
-        method: "Put",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,8 +44,9 @@ export const updateProduct = async (id: string, formData: FormData) => {
     if (!response.ok) {
       console.log(`HTTP error! status: ${response.status}`);
     }
-    console.log(response);
-    // const result = await response.json();
+
+    const result = await response.json();
+    console.log(result);
     // return result.detail;
   } catch (error) {
     console.error("Failed to fetch order:", error);

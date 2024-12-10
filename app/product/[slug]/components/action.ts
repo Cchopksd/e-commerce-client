@@ -11,14 +11,13 @@ export const fetchProductByID = async ({
 }) => {
   const hostname = process.env.HOST_NAME;
   try {
-    const resource = await fetch(`${hostname}/product/by-id`, {
+    const resource = await fetch(`${hostname}/product/by-id/${product_id}`, {
       method: "POST",
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        product_id,
         user_id,
       }),
     });
@@ -26,7 +25,7 @@ export const fetchProductByID = async ({
     if (!resource.ok) {
       throw new Error(`HTTP error! status: ${resource.status}`);
     }
-    return result;
+    return result.detail;
   } catch (error) {
     console.error("Error fetching product:", error);
     throw error;
@@ -39,7 +38,7 @@ export const addToCart = async (
   quantity: number,
 ) => {
   const hostname = process.env.HOST_NAME;
-  const userInfo = await decryptToken(token);
+  const userInfo = await decryptToken(token || "");
   const user_id = userInfo?.sub;
   try {
     const resource = await fetch(`${hostname}/cart/add-item`, {

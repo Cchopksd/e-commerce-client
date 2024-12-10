@@ -20,7 +20,7 @@ export async function getUserAddress(token: string, user_id: string) {
       return null;
     }
     const result = await response.json();
-    return result;
+    return result.detail;
   } catch (error) {
     console.error("Error fetching user info:", error);
   }

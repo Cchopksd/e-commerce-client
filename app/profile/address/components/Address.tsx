@@ -1,5 +1,7 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { MapPin, Home, Building, Clock, Star, Edit, Trash } from "lucide-react";
+import AddAddressModal from "../add-new-address/NewAddress";
 
 interface AddressData {
   default: boolean;
@@ -87,14 +89,54 @@ const AddressCard = ({ address }: { address: AddressData }) => {
 };
 
 // Example usage with a grid layout
-export default function AddressCardList({ addressData }: { addressData: AddressData[] }) {
+export default function AddressCardList({
+  addressData,
+}: {
+  addressData: AddressData[];
+}) {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
-    <div className="p-6 ">
-      <div className="grid gap-6 ">
-        {addressData.map((address) => (
-          <AddressCard key={address._id} address={address} />
-        ))}
-      </div>
+    <div className="flex flex-col gap-4 px-4 w-full">
+      {addressData && addressData.length > 0 && (
+        <div className="flex w-full justify-end">
+          <button
+            onClick={() => setOpenModal(true)}
+            className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            เพิ่มที่อยู่ใหม่
+          </button>
+        </div>
+      )}
+
+      {addressData && addressData.length > 0 ? (
+        <div className="grid gap-6">
+          {addressData.map((address) => (
+            <AddressCard key={address._id} address={address} />
+          ))}
+        </div>
+      ) : (
+        <div className="w-full h-full flex flex-col justify-center items-center m-auto">
+          <div className="text-center text-gray-500">
+            <p className="text-lg font-semibold">ไม่มีที่อยู่ที่บันทึกไว้</p>
+            <p className="text-sm mt-2">
+              เพิ่มที่อยู่ใหม่ของคุณได้โดยคลิกปุ่มด้านล่าง
+            </p>
+            <button
+              onClick={() => setOpenModal(true)}
+              className="mt-4 px-4 py-2 max-w-32 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+              เพิ่มที่อยู่ใหม่
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal สำหรับเพิ่มที่อยู่ใหม่ */}
+      {openModal && (
+        <AddAddressModal
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+        />
+      )}
     </div>
   );
 }

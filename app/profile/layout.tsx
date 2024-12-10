@@ -8,13 +8,13 @@ export default async function layout({
   children: React.ReactNode;
 }) {
   const userToken = await getToken();
-  const userInfo = userToken ? await decryptToken(userToken) : null;
+  const userInfo = await decryptToken(userToken);
 
   return (
     <div className="bg-gray-100">
       <div className="flex w-full h-full max-w-[1440px] mx-auto py-20 px-4 gap-10">
-        <Sidebar userInfo={userInfo} />
-        <main className="w-full">{children}</main>
+        {userInfo && <Sidebar userInfo={userInfo} />}
+        {children}
       </div>
     </div>
   );

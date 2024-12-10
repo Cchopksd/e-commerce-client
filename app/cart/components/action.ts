@@ -5,20 +5,20 @@ export const fetchCartByID = async () => {
   const token = await getToken();
   const hostname = process.env.HOST_NAME;
 
-  const userInfo = await decryptToken(token);
+  const userInfo = await decryptToken(token || "");
   const user_id = userInfo?.sub;
 
   if (!user_id) {
     console.error("User ID not found in the token");
     return [];
   }
+  console.log(user_id);
 
   try {
-    const resource = await fetch(`${hostname}/cart/${user_id}`, {
+    const resource = await fetch(`${hostname}/cart/user_id/${user_id}`, {
       method: "GET",
       cache: "no-store",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });

@@ -11,6 +11,8 @@ import {
 import { setSidebarOpen } from "@/libs/features/admin/sidebarSlice";
 
 import { useAppDispatch, useAppSelector } from "@/libs/hooks";
+import { LogOut } from "lucide-react";
+import { logout } from "@/app/utils/token";
 
 const MENU_ITEMS = [
   {
@@ -65,9 +67,10 @@ export default function Sidebar() {
         aria-label="Sidebar Navigation">
         <div className="h-full flex flex-col">
           <div className="p-6">
-            <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+            <h1 className="text-xl font-semibold text-white text-center">
+              E-Commerce
+            </h1>
           </div>
-
           <div className="flex-1 overflow-y-auto px-6 pb-6">
             <ul className="space-y-3">
               {MENU_ITEMS.map((item) => (
@@ -82,6 +85,17 @@ export default function Sidebar() {
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="px-6 pb-6 flex w-full">
+            <button
+              onClick={() => {
+                logout();
+                window.location.href = "/";
+              }}
+              className="flex w-full items-center gap-3 px-4 py-3 hover:bg-gray-800 rounded-lg transition-colors">
+              <LogOut className="text-xl" />
+              <span className="font-medium">ออกจากระบบ</span>
+            </button>
           </div>
         </div>
       </aside>

@@ -15,7 +15,6 @@ export interface User {
 }
 
 export default function AdminDashboardPage({ users }: { users: User[] }) {
-  console.log(users);
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

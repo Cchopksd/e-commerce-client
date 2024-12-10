@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import Summary from "./summary";
-import { CartWithAddress, Product } from "./interface";
+import { CartWithAddress } from "./interface";
 import { Minus, Plus } from "lucide-react";
 import { addToCart, reduceFromCart } from "./action";
 import Swal from "sweetalert2";
@@ -83,8 +83,10 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
         <section className="w-full lg:w-3/4 flex flex-col">
           <h1 className="text-2xl font-semibold mb-2">Shopping Cart</h1>
           <p className="text-gray-600 mb-6">
-            {cartItems.length} items in your cart.
+            {cartItems.length} items in your cart
           </p>
+
+          {/* Desktop Table View */}
           <div className="hidden md:block">
             <table className="w-full border-collapse shadow-xl my-4 bg-white rounded-2xl">
               <thead>
@@ -100,7 +102,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                   cartItems.map((product, index) => (
                     <tr
                       key={index}
-                      className="border-b hover:bg-gray-50 transition-colors ">
+                      className="border-b hover:bg-gray-50 transition-colors">
                       <td className="p-4 text-left flex items-center gap-4">
                         <div className="w-20 h-20 flex-shrink-0">
                           <Image
@@ -124,8 +126,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                           product.product_id.price
                         ).toLocaleString()}
                       </td>
-                      <td className="p-4 text-center text-gray-700 gap-4">
-                        <div className="flex justify-between">
+                      <td className="p-4 text-center text-gray-700">
+                        <div className="flex justify-center items-center gap-4">
                           <button
                             onClick={() =>
                               handleDecreaseItem(
@@ -135,9 +137,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                                 product.quantity,
                               )
                             }
-                            // disabled={quantity <= 1}
-                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200  rounded-md transition-colors">
-                            <Minus />
+                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors">
+                            <Minus size={16} />
                           </button>
                           <span className="text-lg font-medium text-gray-800">
                             {product.quantity}
@@ -153,12 +154,11 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                             disabled={
                               product.quantity >= product.product_id.amount
                             }
-                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200  rounded-md transition-colors">
-                            <Plus className="" />
+                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50">
+                            <Plus size={16} />
                           </button>
                         </div>
                       </td>
-
                       <td className="p-4 text-center font-semibold text-[#fed28c]">
                         ฿
                         {(
@@ -170,13 +170,85 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="text-center">
+                    <td colSpan={4} className="text-center p-4 text-gray-500">
                       Your cart is empty.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {cartItems && cartItems.length > 0 ? (
+              cartItems.map((product, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-xl shadow-md p-4 flex items-center space-x-4">
+                  <div className="w-20 h-20 flex-shrink-0">
+                    <Image
+                      src={product.product_id.images[0].image_url || ""}
+                      alt={product.product_id.name}
+                      className="w-full h-full object-cover rounded-md border"
+                      width={80}
+                      height={80}
+                    />
+                  </div>
+                  <div className="flex-grow">
+                    <a
+                      href={`product/${product.product_id._id}`}
+                      className="text-gray-800 font-medium block mb-2 truncate">
+                      {product.product_id.name}
+                    </a>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() =>
+                            handleDecreaseItem(
+                              product._id,
+                              product.product_id._id,
+                              1,
+                              product.quantity,
+                            )
+                          }
+                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors">
+                          <Minus size={16} />
+                        </button>
+                        <span className="text-lg font-medium text-gray-800">
+                          {product.quantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            handleIncreaseItem(
+                              product._id,
+                              product.product_id._id,
+                              1,
+                            )
+                          }
+                          disabled={
+                            product.quantity >= product.product_id.amount
+                          }
+                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50">
+                          <Plus size={16} />
+                        </button>
+                      </div>
+                      <div className="text-[#fed28c] font-semibold">
+                        ฿
+                        {(
+                          (product.product_id.discount ??
+                            product.product_id.price) * product.quantity
+                        ).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 p-4">
+                Your cart is empty.
+              </div>
+            )}
           </div>
         </section>
         <section className="w-full lg:w-1/4">

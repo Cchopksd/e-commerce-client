@@ -1,5 +1,7 @@
+"use client";
 import Link from "next/link";
 import { useRef, useEffect } from "react";
+import { logout } from "../utils/token";
 
 interface NavOption {
   name: string;
@@ -33,6 +35,13 @@ export default function UserMenu({ isOpen, onClose, userMenu }: UserMenuProps) {
 
   if (!isOpen) return null;
 
+  const handleUserLogout = async () => {
+    const result = await logout();
+    if (result) {
+      return (window.location.href = "/");
+    }
+  };
+
   return (
     <div
       ref={menuRef}
@@ -48,7 +57,16 @@ export default function UserMenu({ isOpen, onClose, userMenu }: UserMenuProps) {
             {item.name}
           </Link>
         ))}
+        <button
+          onClick={() => {
+            onClose();
+            handleUserLogout();
+          }}
+          className="flex items-center px-4 py-2.5 text-gray-700 hover:bg-[#FEF6F1] hover:text-[#257180] 
+                     transition-all duration-200 text-sm font-medium w-full">
+          Logout
+        </button>
       </div>
     </div>
   );
-} 
+}

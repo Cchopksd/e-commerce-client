@@ -1,17 +1,16 @@
 "use client";
-import React, { useState, FormEvent } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import React, { useState, useEffect } from "react";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { X, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { updateProduct } from "./action";
-import Image from "next/image";
+import { DraggableImage } from "./ImageUploadzone";
 
 interface ProductType {
   _id: string;
   name: string;
   images: Array<{
-    image_url: string;
-    public_id: string;
+    image_url: string | File;
   }>;
   price: number;
   discount: number;
@@ -21,58 +20,6 @@ interface ProductType {
   sale_out: number;
 }
 
-const DraggableImage = ({
-  image,
-  index,
-  moveImage,
-  removeImage,
-}: {
-  image: { image_url: string; public_id: string };
-  index: number;
-  moveImage: (dragIndex: number, hoverIndex: number) => void;
-  removeImage: (index: number) => void;
-}) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: "IMAGE",
-    item: { index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-
-  const [, drop] = useDrop({
-    accept: "IMAGE",
-    hover: (draggedItem: { index: number }) => {
-      if (draggedItem.index !== index) {
-        moveImage(draggedItem.index, index);
-        draggedItem.index = index;
-      }
-    },
-  });
-
-  return (
-    <div
-      ref={(node) => {
-        drag(drop(node));
-      }}
-      className={`relative group transition-all duration-300 ${
-        isDragging ? "scale-90 opacity-50" : "scale-100"
-      } hover:shadow-lg`}>
-      <Image
-        fill
-        src={image.image_url}
-        alt={`Product image ${index + 1}`}
-        className="w-full h-48 object-cover rounded-xl shadow-sm"
-      />
-      <button
-        onClick={() => removeImage(index)}
-        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all">
-        <X size={14} />
-      </button>
-    </div>
-  );
-};
-
 const ProductManagementPage = ({
   productData,
 }: {
@@ -81,43 +28,80 @@ const ProductManagementPage = ({
   const [product, setProduct] = useState<ProductType>(productData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [photosFiles, setPhotosFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    const initializeFiles = async () => {
+      try {
+        const files = await Promise.all(
+          product.images.map(async (photo) => {
+            if (photo.image_url instanceof File) return photo.image_url;
+
+            const response = await fetch(photo.image_url);
+            const blob = await response.blob();
+            return new File([blob], `product-image`, { type: blob.type });
+          }),
+        );
+
+        setPhotosFiles(files);
+      } catch (error) {
+        console.error("Failed to initialize image files", error);
+      }
+    };
+
+    initializeFiles();
+  }, [product.images]);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      const newImages = Array.from(files).map((file) => ({
-        image_url: URL.createObjectURL(file),
-        public_id: "",
-      }));
+      const newFiles = Array.from(files);
 
-      setProduct((prev) => ({
-        ...prev,
-        images: [...prev.images, ...newImages],
-      }));
+      // Limit total images to 8
+      const totalNewFiles = [...photosFiles, ...newFiles];
+      const limitedFiles = totalNewFiles.slice(0, 8);
+
+      setPhotosFiles(limitedFiles);
+
+      // Update product images, preserving existing URLs and adding new files
+      // setProduct((prev) => ({
+      //   ...prev,
+      //   images: [
+      //     ...prev.images.filter((img) => typeof img.image_url === "string"),
+      //     ...limitedFiles.map((file) => ({ image_url: file })),
+      //   ],
+      // }));
     }
   };
 
   const moveImage = (dragIndex: number, hoverIndex: number) => {
-    const newImages = [...product.images];
-    const [removedImage] = newImages.splice(dragIndex, 1);
-    newImages.splice(hoverIndex, 0, removedImage);
+    const updatedPhotosFiles = [...photosFiles];
+    const updatedImages = [...product.images];
 
-    setProduct((prev) => ({
-      ...prev,
-      images: newImages,
-    }));
+    const [removedImage] = updatedPhotosFiles.splice(dragIndex, 1);
+    const [removedProductImage] = updatedImages.splice(dragIndex, 1);
+
+    updatedPhotosFiles.splice(hoverIndex, 0, removedImage);
+    updatedImages.splice(hoverIndex, 0, removedProductImage);
+
+    setPhotosFiles(updatedPhotosFiles);
+    // setProduct((prev) => ({
+    //   ...prev,
+    //   images: updatedImages,
+    // }));
   };
 
   const removeImage = (indexToRemove: number) => {
-    setProduct((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, index) => index !== indexToRemove),
-    }));
+    setPhotosFiles((prev) =>
+      prev.filter((_, index) => index !== indexToRemove),
+    );
   };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
     setProduct((prev) => ({
       ...prev,
       [name]: ["price", "discount", "amount", "sale_out"].includes(name)
@@ -126,7 +110,7 @@ const ProductManagementPage = ({
     }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
@@ -140,11 +124,9 @@ const ProductManagementPage = ({
       formData.append("detail", product.detail);
       formData.append("amount", product.amount.toString());
       formData.append("sale_out", product.sale_out.toString());
-      product.images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image.image_url);
-        if (image.public_id) {
-          formData.append(`public_id[${index}]`, image.public_id);
-        }
+
+      photosFiles.forEach((file) => {
+        formData.append("images", file);
       });
 
       await updateProduct(product._id, formData);
@@ -163,39 +145,6 @@ const ProductManagementPage = ({
           <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
             จัดการสินค้า
           </h1>
-
-          <div className="mb-8">
-            <label className="block text-gray-700 text-lg font-semibold mb-4">
-              รูปภาพสินค้า
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-4">
-              {product.images.map((image, index) => (
-                <DraggableImage
-                  key={index}
-                  image={image}
-                  index={index}
-                  moveImage={moveImage}
-                  removeImage={removeImage}
-                />
-              ))}
-
-              {product.images.length < 8 && (
-                <label className="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center h-48 hover:bg-gray-50 hover:border-blue-400 transition-all cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <div className="text-center">
-                    <Plus size={32} className="mx-auto mb-2 text-gray-400" />
-                    <p className="text-gray-500">อัพโหลดรูปภาพ</p>
-                  </div>
-                </label>
-              )}
-            </div>
-          </div>
 
           <div className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
@@ -323,6 +272,39 @@ const ProductManagementPage = ({
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter total sales"
                 />
+              </div>
+            </div>
+
+            <div className="my-8">
+              <label className="block text-gray-700 text-lg font-semibold mb-4">
+                รูปภาพสินค้า
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-4">
+                {photosFiles.map((image, index) => (
+                  <DraggableImage
+                    key={index}
+                    image={image}
+                    index={index}
+                    moveImage={moveImage}
+                    removeImage={removeImage}
+                  />
+                ))}
+
+                {product.images.length < 8 && (
+                  <label className="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center h-48 hover:bg-gray-50 hover:border-blue-400 transition-all cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <div className="text-center">
+                      <Plus size={32} className="mx-auto mb-2 text-gray-400" />
+                      <p className="text-gray-500">อัพโหลดรูปภาพ</p>
+                    </div>
+                  </label>
+                )}
               </div>
             </div>
 

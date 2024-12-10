@@ -5,7 +5,7 @@ import Account from "./components/Account";
 
 export default async function page() {
   const token = await getToken();
-  const userInfo = await decryptToken(token);
+  const userInfo = await decryptToken(token || "");
   if (!token || !userInfo) {
     return <div>No user info</div>;
   }
@@ -13,8 +13,8 @@ export default async function page() {
   const userData = await getUserInfo(token, userInfo.sub);
 
   return (
-    <div className="w-full min-h-screen bg-white shadow-md rounded-lg p-4">
+    <>
       <Account userData={userData} />
-    </div>
+    </>
   );
 }
