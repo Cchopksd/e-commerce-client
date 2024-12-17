@@ -1,15 +1,17 @@
 "use server";
 
-import { decryptToken } from "@/app/utils/token";
+import { decryptToken, getToken } from "@/app/utils/token";
+import { RiContactsBookLine } from "react-icons/ri";
+
+const hostname = process.env.HOST_NAME;
 
 export const fetchProductByID = async ({
   product_id,
   user_id,
 }: {
   product_id: string;
-  user_id: string | null;
+  user_id: string;
 }) => {
-  const hostname = process.env.HOST_NAME;
   try {
     const resource = await fetch(`${hostname}/product/by-id/${product_id}`, {
       method: "POST",
@@ -23,7 +25,7 @@ export const fetchProductByID = async ({
     });
     const result = await resource.json();
     if (!resource.ok) {
-      throw new Error(`HTTP error! status: ${resource.status}`);
+      return `HTTP error! status: ${resource.status}`;
     }
     return result.detail;
   } catch (error) {
@@ -45,8 +47,8 @@ export const addToCart = async (
       method: "POST",
       cache: "no-store",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         user_id,
@@ -55,12 +57,49 @@ export const addToCart = async (
       }),
     });
     const result = await resource.json();
+    console.log(result);
     if (!resource.ok) {
-      throw new Error(`HTTP error! status: ${resource.status}`);
+      console.error(`HTTP error! status: ${resource.status}`);
     }
     return result;
   } catch (error) {
     console.error("Error adding to cart:", error);
     throw error;
+  }
+};
+
+export const favoriteProduct = async ({
+  product_id,
+  is_favorite,
+}: {
+  product_id: string;
+  is_favorite: boolean;
+}) => {
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
+
+  if (!userInfo || !token) {
+    return { message: "Token is not defined" };
+  }
+
+  try {
+    const resource = await fetch(`${hostname}/favorite`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: userInfo.sub,
+        product_id,
+        is_favorite,
+      }),
+    }).then((res) => res.json());
+    console.log(resource);
+    return resource;
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };

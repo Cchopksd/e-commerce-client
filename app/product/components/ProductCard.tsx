@@ -35,7 +35,8 @@ export default function ProductCard({
   );
 
   return (
-    <div
+    <a
+      href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
       className={`group relative flex w-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white 
       transition-all duration-300 hover:shadow-lg h-[250px] md:h-[380px] ${className}`}>
       {/* Image Container */}
@@ -52,7 +53,9 @@ export default function ProductCard({
         {/* Discount Tag */}
         {product.discount > 0 && (
           <div className="absolute left-0 top-3 bg-red-500 px-3 py-1 shadow-sm">
-            <span className="text-xs font-bold text-white">-{discountPercentage}%</span>
+            <span className="text-xs font-bold text-white">
+              -{discountPercentage}%
+            </span>
           </div>
         )}
 
@@ -65,10 +68,10 @@ export default function ProductCard({
 
         {/* Add Favorite Button */}
         <button
-
           className="absolute right-3 top-3 rounded-full bg-white/90 p-2 transition-all hover:bg-white hover:shadow-md"
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-        >
+          aria-label={
+            isFavorite ? "Remove from favorites" : "Add to favorites"
+          }>
           <Heart
             className={`h-4 w-4 ${
               isFavorite
@@ -83,11 +86,9 @@ export default function ProductCard({
       <div className="flex flex-1 flex-col p-4">
         {/* Product Name */}
         <h4 className="mb-2 line-clamp-2 min-h-[40px] text-sm font-medium">
-          <a
-            href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
-            className="text-gray-700 transition-colors hover:text-red-500">
+          <p className="text-gray-700 transition-colors hover:text-red-500">
             {product.name}
-          </a>
+          </p>
         </h4>
 
         {/* Price Section */}
@@ -118,7 +119,9 @@ export default function ProductCard({
               <Package className="h-4 w-4 text-gray-400" />
               <p className="text-xs font-medium text-gray-500">
                 {product.sale_out < 10 ? (
-                  <span className="text-red-500">เหลือเพียง {product.sale_out} ชิ้น</span>
+                  <span className="text-red-500">
+                    เหลือเพียง {product.sale_out} ชิ้น
+                  </span>
                 ) : (
                   <span>มีสินค้า {product.sale_out} ชิ้น</span>
                 )}
@@ -127,6 +130,6 @@ export default function ProductCard({
           )}
         </div>
       </div>
-    </div>
+    </a>
   );
 }

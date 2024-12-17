@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 interface MenuItem {
   name: string;
@@ -11,7 +12,7 @@ interface MenuItem {
   icon?: React.ReactNode;
 }
 
-const Sidebar = ({ userInfo }: any) => {
+export default function Sidebar({ userInfo }: any) {
   const pathname = usePathname();
 
   const menu: MenuItem[] = [
@@ -40,6 +41,7 @@ const Sidebar = ({ userInfo }: any) => {
   ];
 
   const isActivePath = (path: string) => pathname === path;
+  const isParentActive = (path: string) => pathname.startsWith(path);
 
   const MenuLink: React.FC<{ item: MenuItem; isSubMenu?: boolean }> = ({
     item,
@@ -63,7 +65,9 @@ const Sidebar = ({ userInfo }: any) => {
   };
 
   return (
-    <aside className="w-full max-w-72">
+    <aside
+      className="w-full max-w-72"
+     >
       <nav className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* User Profile Section */}
         <div className="px-4 py-6 text-left">
@@ -87,11 +91,19 @@ const Sidebar = ({ userInfo }: any) => {
               <div key={index}>
                 <MenuLink item={item} />
                 {item.sub && (
-                  <div>
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={
+                      isParentActive(item.path)
+                        ? { height: "auto", opacity: 1 }
+                        : { height: 0, opacity: 0 }
+                    }
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden">
                     {item.sub.map((subItem, subIndex) => (
                       <MenuLink key={subIndex} item={subItem} isSubMenu />
                     ))}
-                  </div>
+                  </motion.div>
                 )}
               </div>
             ))}
@@ -100,6 +112,4 @@ const Sidebar = ({ userInfo }: any) => {
       </nav>
     </aside>
   );
-};
-
-export default Sidebar;
+}

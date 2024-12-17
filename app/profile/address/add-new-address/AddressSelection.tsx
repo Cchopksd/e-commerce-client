@@ -1,68 +1,101 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-interface AddressSelectionProps {
-  onAddressSelect: (address: {
-    province: string;
-    district: string;
-    subdistrict: string;
-  }) => void;
-}
-
-const AddressSelection: React.FC<AddressSelectionProps> = ({
+const AddressSelection = ({
   onAddressSelect,
+  addressData,
+}: {
+  onAddressSelect: any;
+  addressData: any;
 }) => {
-  const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [subdistricts, setSubdistricts] = useState<string[]>([]);
+  const [provinces, setProvinces] = useState(addressData.province || []);
+  const [districts, setDistricts] = useState(addressData.district || []);
+  const [subdistricts, setSubdistricts] = useState(
+    addressData.subdistrict || [],
+  );
 
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedSubdistrict, setSelectedSubdistrict] = useState("");
 
   useEffect(() => {
-    async function fetchProvince() {
-      const response = await fetch(
-        "https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province_with_amphure_tambon.json",
-      );
-
-      const province = await response.json();
-      setProvinces(province);
+    async function fetchProvinces() {
+      try {
+        const response = await fetch(
+          "https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_province.json",
+        );
+        const provinceData = await response.json();
+        setProvinces(provinceData);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
     }
-
-    fetchProvince();
+    fetchProvinces();
   }, []);
 
   useEffect(() => {
-    if (selectedProvince) {
-      // Replace this with an API call to fetch districts based on selectedProvince.
-      setDistricts(["District A1", "District A2", "District A3"]);
-    } else {
-      setDistricts([]);
+    async function fetchDistricts() {
+      if (!selectedProvince) return;
+
+      try {
+        const response = await fetch(
+          "https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_amphure.json",
+        );
+        const districtData = await response.json();
+        const filteredDistricts = districtData.filter(
+          (item: { province_id: number }) =>
+            item.province_id === Number(selectedProvince),
+        );
+        setDistricts(filteredDistricts);
+        setSelectedDistrict(""); // Reset dependent selections
+        setSubdistricts([]);
+        setSelectedSubdistrict("");
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+      }
     }
-    setSelectedDistrict("");
-    setSelectedSubdistrict("");
-    setSubdistricts([]);
+    fetchDistricts();
   }, [selectedProvince]);
 
   useEffect(() => {
-    if (selectedDistrict) {
-      // Replace this with an API call to fetch subdistricts based on selectedDistrict.
-      setSubdistricts(["Subdistrict A1-1", "Subdistrict A1-2"]);
-    } else {
-      setSubdistricts([]);
+    async function fetchSubdistricts() {
+      if (!selectedDistrict) return;
+
+      try {
+        const response = await fetch(
+          "https://raw.githubusercontent.com/kongvut/thai-province-data/master/api_tambon.json",
+        );
+        const subdistrictData = await response.json();
+        const filteredSubdistricts = subdistrictData.filter(
+          (item: { amphure_id: number }) =>
+            item.amphure_id === Number(selectedDistrict),
+        );
+        setSubdistricts(filteredSubdistricts);
+        setSelectedSubdistrict(""); // Reset dependent selection
+      } catch (error) {
+        console.error("Error fetching subdistricts:", error);
+      }
     }
-    setSelectedSubdistrict("");
+    fetchSubdistricts();
   }, [selectedDistrict]);
 
   const handleSubmit = () => {
+    const provinceName =
+      provinces.find((p: any) => p.id === Number(selectedProvince))?.name_th ||
+      "";
+    const districtName =
+      districts.find((d: any) => d.id === Number(selectedDistrict))?.name_th ||
+      "";
+    const subdistrictName =
+      subdistricts.find((s: any) => s.id === Number(selectedSubdistrict))
+        ?.name_th || "";
+
     onAddressSelect({
-      province: selectedProvince,
-      district: selectedDistrict,
-      subdistrict: selectedSubdistrict,
+      province: provinceName,
+      district: districtName,
+      subdistrict: subdistrictName,
     });
   };
-  console.log(provinces);
 
   return (
     <div>
@@ -80,9 +113,9 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             onChange={(e) => setSelectedProvince(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Select Province</option>
-            {provinces.map((province) => (
-              <option key={province} value={province}>
-                {province}
+            {provinces.map((province: any) => (
+              <option key={province.id} value={province.id}>
+                {province.name_th}
               </option>
             ))}
           </select>
@@ -101,9 +134,9 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={!selectedProvince}>
             <option value="">Select District</option>
-            {districts.map((district) => (
-              <option key={district} value={district}>
-                {district}
+            {districts.map((district: any) => (
+              <option key={district.id} value={district.id}>
+                {district.name_th}
               </option>
             ))}
           </select>
@@ -122,9 +155,9 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={!selectedDistrict}>
             <option value="">Select Subdistrict</option>
-            {subdistricts.map((subdistrict) => (
-              <option key={subdistrict} value={subdistrict}>
-                {subdistrict}
+            {subdistricts.map((subdistrict: any) => (
+              <option key={subdistrict.id} value={subdistrict.id}>
+                {subdistrict.name_th}
               </option>
             ))}
           </select>

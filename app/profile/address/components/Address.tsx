@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { MapPin, Home, Building, Clock, Star, Edit, Trash } from "lucide-react";
-import AddAddressModal from "../add-new-address/NewAddress";
+import AddAddressModal from "../add-new-address/page";
 
 interface AddressData {
   default: boolean;
@@ -121,21 +121,15 @@ export default function AddressCardList({
             <p className="text-sm mt-2">
               เพิ่มที่อยู่ใหม่ของคุณได้โดยคลิกปุ่มด้านล่าง
             </p>
-            <button
-              onClick={() => setOpenModal(true)}
-              className="mt-4 px-4 py-2 max-w-32 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
-              เพิ่มที่อยู่ใหม่
-            </button>
+            <div className="py-4">
+              <a
+                href="/profile/address/add-new-address"
+                className="px-4 py-2 max-w-32 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                เพิ่มที่อยู่ใหม่
+              </a>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Modal สำหรับเพิ่มที่อยู่ใหม่ */}
-      {openModal && (
-        <AddAddressModal
-          isOpen={openModal}
-          onClose={() => setOpenModal(false)}
-        />
       )}
     </div>
   );

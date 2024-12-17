@@ -72,7 +72,6 @@ const getStatusConfig = (status: OrderStatus) => {
 
 export default function OrderContainer({
   orders,
-  totalOrders,
   totalPage,
   currentPage,
   userId,
@@ -224,6 +223,12 @@ export default function OrderContainer({
                       href={`/profile/order/${order._id}`}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
                       ดูรายละเอียด
+                    </a>
+
+                    <a
+                      href={`/payment/${order.payment_id}`}
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                      ชำระเงิน
                     </a>
                   </div>
                 </div>

@@ -144,18 +144,26 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
               </Link>
 
               {userInfo ? (
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="relative group">
-                  <Image
-                    src={userInfo?.profile_image}
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full shadow-md p-1 cursor-pointer bg-white
-                             ring-2 ring-transparent hover:ring-black/20 transition-all duration-200"
-                    width={40}
-                    height={40}
+                <>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="relative group">
+                    <Image
+                      src={userInfo?.profile_image}
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full shadow-md p-1 cursor-pointer bg-white
+                               ring-2 ring-transparent hover:ring-black/20 transition-all duration-200"
+                      width={40}
+                      height={40}
+                    />
+                  </button>{" "}
+                  {/* User Menu Component */}
+                  <UserMenu
+                    isOpen={isUserMenuOpen}
+                    onClose={() => setIsUserMenuOpen(false)}
+                    userMenu={userMenu}
                   />
-                </button>
+                </>
               ) : (
                 <Link
                   href="/login"
@@ -220,13 +228,6 @@ export default function Navbar({ userInfo }: { userInfo: any }) {
             )}
           </div>
         </div>
-
-        {/* User Menu Component */}
-        <UserMenu
-          isOpen={isUserMenuOpen}
-          onClose={() => setIsUserMenuOpen(false)}
-          userMenu={userMenu}
-        />
       </nav>
     </div>
   );

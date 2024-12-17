@@ -45,7 +45,7 @@ export default function UserMenu({ isOpen, onClose, userMenu }: UserMenuProps) {
   return (
     <div
       ref={menuRef}
-      className="absolute right-8 top-20 w-48 bg-white rounded-lg shadow-lg z-50">
+      className="absolute top-20 w-48 bg-white rounded-lg shadow-lg z-50">
       <div className="py-2">
         {userMenu.map((item: NavOption, index: number) => (
           <Link

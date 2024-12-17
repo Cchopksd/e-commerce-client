@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { updateUserInfo } from "./action";
+import Image from "next/image";
 
 interface Image {
   image_url: string;
@@ -249,7 +250,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
                 `}
                 onClick={() => fileInputRef.current?.click()}>
                 {previewImage ? (
-                  <img
+                  <Image
+                    fill
                     src={previewImage}
                     alt="Profile"
                     className="w-full h-full object-cover rounded-full"
@@ -274,7 +276,9 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
         ) : (
           <div className="w-32 h-32 rounded-full border-2 border-gray-300">
             {previewImage ? (
-              <img
+              <Image
+                width={100}
+                height={100}
                 src={previewImage}
                 alt="Profile"
                 className="w-full h-full object-cover rounded-full"

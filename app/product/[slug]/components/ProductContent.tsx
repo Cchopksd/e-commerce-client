@@ -1,8 +1,14 @@
 "use client";
 import Image from "next/image";
-import React from "react";
-import { LuPlus, LuMinus, LuShoppingCart } from "react-icons/lu";
-import { addToCart } from "./action";
+import React, { useState } from "react";
+import {
+  LuPlus,
+  LuMinus,
+  LuShoppingCart,
+  LuHeart,
+  LuShare2,
+} from "react-icons/lu";
+import { addToCart, favoriteProduct } from "./action";
 import { decrement, increment } from "@/libs/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/libs/hooks";
 
@@ -26,15 +32,26 @@ interface ProductData {
 interface Product {
   product: ProductData;
   token: string | null;
+  favorite: boolean;
 }
 
-export default function ProductContent({ product, token }: Product) {
+export default function ProductContent({ product, token, favorite }: Product) {
   const dispatch = useAppDispatch();
 
   const { value } = useAppSelector((state) => state.cart);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [isAdding, setIsAdding] = React.useState(false);
   const images: string[] = [];
+
+  const [isFavorite, setIsFavorite] = useState<boolean>(favorite);
+
+  const handleFavoriteToggle = async (isFavorite: boolean) => {
+    setIsFavorite(isFavorite);
+    const favorite = await favoriteProduct({
+      product_id: product._id,
+      is_favorite: isFavorite,
+    });
+  };
 
   product.images.map((items) => {
     images.push(items.image_url);
@@ -83,7 +100,9 @@ export default function ProductContent({ product, token }: Product) {
             <Image
               src={images[currentImageIndex]}
               alt={`Product - Image ${currentImageIndex + 1}`}
-              className={`object-contain w-full h-full p-4 ${isSoldOut ? 'opacity-75' : ''}`}
+              className={`object-contain w-full h-full p-4 ${
+                isSoldOut ? "opacity-75" : ""
+              }`}
               fill
               priority
             />
@@ -94,9 +113,10 @@ export default function ProductContent({ product, token }: Product) {
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
                 className={`relative aspect-square rounded-lg overflow-hidden border-2 
-                  ${currentImageIndex === idx 
-                    ? 'border-blue-500 ring-2 ring-blue-200' 
-                    : 'border-gray-200 hover:border-gray-300'
+                  ${
+                    currentImageIndex === idx
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-200 hover:border-gray-300"
                   } transition-all duration-200`}>
                 <Image
                   src={img}
@@ -111,32 +131,63 @@ export default function ProductContent({ product, token }: Product) {
 
         {/* Product Info Section */}
         <div className="space-y-6">
-          <div>
-            <div className="mb-3">
-              <span className="px-3 py-1 text-sm font-medium bg-gray-100 rounded-full">
-                {product.category}
-              </span>
+          <div className="flex justify-between">
+            <div>
+              <div className="mb-3">
+                <span className="px-3 py-1 text-sm font-medium bg-gray-100 rounded-full">
+                  {product.category}
+                </span>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {product.name}
+              </h1>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <div>
+              <div className="top-4 right-4 z-20 flex space-x-2">
+                <button
+                  onClick={() => handleFavoriteToggle(!isFavorite)}
+                  className={`p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md transition-colors 
+                    ${
+                      isFavorite
+                        ? "text-red-500 hover:bg-red-50"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}>
+                  <LuHeart
+                    className="w-5 h-5"
+                    fill={isFavorite ? "currentColor" : "none"}
+                  />
+                </button>
+                <button className="p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md text-gray-600 hover:bg-gray-100">
+                  <LuShare2 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               {product.discount ? (
                 <>
-                  <span className={`text-3xl font-bold ${isSoldOut ? 'text-gray-400' : 'text-red-600'}`}>
+                  <span
+                    className={`text-3xl font-bold ${
+                      isSoldOut ? "text-gray-400" : "text-red-600"
+                    }`}>
                     ฿{product.discount.toLocaleString()}
                   </span>
                   <span className="text-xl text-gray-400 line-through">
                     ฿{product.price.toLocaleString()}
                   </span>
-                  <span className={`px-2 py-1 text-xs font-semibold text-white rounded-md
-                    ${isSoldOut ? 'bg-gray-400' : 'bg-red-500'}`}>
+                  <span
+                    className={`px-2 py-1 text-xs font-semibold text-white rounded-md
+                    ${isSoldOut ? "bg-gray-400" : "bg-red-500"}`}>
                     {discountPercentage}% OFF
                   </span>
                 </>
               ) : (
-                <span className={`text-3xl font-bold ${isSoldOut ? 'text-gray-400' : 'text-gray-900'}`}>
+                <span
+                  className={`text-3xl font-bold ${
+                    isSoldOut ? "text-gray-400" : "text-gray-900"
+                  }`}>
                   ฿{product.price.toLocaleString()}
                 </span>
               )}
@@ -166,9 +217,10 @@ export default function ProductContent({ product, token }: Product) {
                   onClick={() => dispatch(decrement(1))}
                   disabled={value <= 1 || isSoldOut}
                   className={`p-2 rounded-l-lg border 
-                    ${(value <= 1 || isSoldOut) 
-                      ? 'bg-gray-50 text-gray-400' 
-                      : 'hover:bg-gray-50 active:bg-gray-100'
+                    ${
+                      value <= 1 || isSoldOut
+                        ? "bg-gray-50 text-gray-400"
+                        : "hover:bg-gray-50 active:bg-gray-100"
                     }`}>
                   <LuMinus className="h-4 w-4" />
                 </button>
@@ -179,9 +231,10 @@ export default function ProductContent({ product, token }: Product) {
                   onClick={() => dispatch(increment(1))}
                   disabled={value >= product.amount || isSoldOut}
                   className={`p-2 rounded-r-lg border 
-                    ${(value >= product.amount || isSoldOut)
-                      ? 'bg-gray-50 text-gray-400' 
-                      : 'hover:bg-gray-50 active:bg-gray-100'
+                    ${
+                      value >= product.amount || isSoldOut
+                        ? "bg-gray-50 text-gray-400"
+                        : "hover:bg-gray-50 active:bg-gray-100"
                     }`}>
                   <LuPlus className="h-4 w-4" />
                 </button>
@@ -193,20 +246,21 @@ export default function ProductContent({ product, token }: Product) {
               disabled={isAdding || value <= 0 || isSoldOut}
               className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg
                 font-medium transition-all duration-300 
-                ${isSoldOut 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : isAdding 
-                    ? 'bg-green-500 text-white scale-95' 
-                    : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
+                ${
+                  isSoldOut
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : isAdding
+                    ? "bg-green-500 text-white scale-95"
+                    : "bg-blue-600 text-white hover:bg-blue-700 active:scale-95"
                 } disabled:opacity-50 disabled:cursor-not-allowed`}>
-              <LuShoppingCart 
-                className={`h-5 w-5 ${isAdding ? 'animate-bounce' : ''}`} 
+              <LuShoppingCart
+                className={`h-5 w-5 ${isAdding ? "animate-bounce" : ""}`}
               />
-              {isSoldOut 
-                ? 'Out of Stock' 
-                : isAdding 
-                  ? 'Added to Cart!' 
-                  : 'Add to Cart'}
+              {isSoldOut
+                ? "Out of Stock"
+                : isAdding
+                ? "Added to Cart!"
+                : "Add to Cart"}
             </button>
           </div>
         </div>
