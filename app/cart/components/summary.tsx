@@ -17,6 +17,9 @@ export default function Summary({
     if (address.length == 0) {
       return alert("กรุณาเพิ่มที่อยู่ของคุณ");
     }
+    if (totalPrice == 0){
+      return alert("กรุณาเลือกสินค้า");
+    }
     router.push("/checkout");
   };
 

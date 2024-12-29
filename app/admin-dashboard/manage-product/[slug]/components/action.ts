@@ -46,7 +46,6 @@ export const updateProduct = async (id: string, formData: FormData) => {
     }
 
     const result = await response.json();
-    console.log(result);
     // return result.detail;
   } catch (error) {
     console.error("Failed to fetch order:", error);

@@ -2,6 +2,8 @@
 import React from "react";
 import Image from "next/image";
 import { useAppSelector } from "@/libs/hooks";
+import { format } from "date-fns";
+import { th } from "date-fns/locale";
 
 const getStatusDisplay = (status: string) => {
   const statusConfig: Record<string, { text: string; className: string }> = {
@@ -264,6 +266,30 @@ export default function OrderContent({ orderData }: { orderData: any }) {
               วิธีการชำระเงิน:{" "}
               <span className="text-gray-900 capitalize">
                 {order_detail.payment_id.payment_method}
+              </span>
+            </p>
+            <p className="text-gray-600">
+              วันที่ชำระเงิน:{" "}
+              <span className="text-gray-900 capitalize">
+                {order_detail.payment_id.paid_at ? (
+                  format(order_detail.payment_id.paid_at, "dd MMMM yyyy ", {
+                    locale: th,
+                  })
+                ) : (
+                  <span>N/A</span>
+                )}
+              </span>
+            </p>
+            <p className="text-gray-600">
+              เวลาที่ชำระเงิน:{" "}
+              <span className="text-gray-900 capitalize">
+                {order_detail.payment_id.paid_at ? (
+                  format(order_detail.payment_id.paid_at, "HH:mm:ss", {
+                    locale: th,
+                  })
+                ) : (
+                  <span>N/A</span>
+                )}
               </span>
             </p>
             <p className="text-gray-600">

@@ -12,7 +12,7 @@ export const fetchCartByID = async () => {
     console.error("User ID not found in the token");
     return [];
   }
-  console.log(user_id);
+
 
   try {
     const resource = await fetch(`${hostname}/cart/user_id/${user_id}`, {

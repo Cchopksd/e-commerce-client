@@ -13,8 +13,7 @@ export const OrderStatusBar = () => {
   const statusFlow = [
     { status: OrderStatus.All, text: "ทั้งหมด" },
     { status: OrderStatus.Unpaid, text: "ยังไม่ชำระเงิน" },
-    { status: OrderStatus.Paid, text: "กำลังดำเนินการ" },
-    { status: OrderStatus.Delivering, text: "กำลังจัดส่ง" },
+    { status: OrderStatus.InProcess, text: "กำลังดำเนินการ" },
     { status: OrderStatus.Delivered, text: "ที่ต้องได้รับ" },
     { status: OrderStatus.Successfully, text: "สำเร็จ" },
     { status: OrderStatus.Cancelled, text: "ยกเลิก" },

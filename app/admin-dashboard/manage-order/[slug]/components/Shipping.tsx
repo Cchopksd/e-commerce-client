@@ -40,7 +40,7 @@ export default function Shipping({
     dispatch(updateDelivering({ trackingNumber, shippingCompany }));
     const result = await updateOrderStatus({
       orderId,
-      status: OrderStatus.Delivering,
+      status: OrderStatus.Delivered,
       shipping_provider: shippingCompany,
       tracking_id: trackingNumber,
     });

@@ -64,7 +64,7 @@ export enum OrderStatus {
   All = "all",
   Unpaid = "unpaid",
   Paid = "paid",
-  Preparing = "preparing",
+  InProcess = "in-process",
   Cancelled = "cancelled",
   Delivering = "delivering",
   Delivered = "delivered",

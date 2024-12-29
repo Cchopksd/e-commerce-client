@@ -36,7 +36,6 @@ export interface ReviewsResponse {
 const StarRating = ({ score }: { score: number }) => {
   const fullStars = Math.floor(score);
   const hasHalfStar = score % 1 >= 0.5;
-  console.log(hasHalfStar);
   return (
     <div className="flex items-center space-x-1">
       {[...Array(fullStars)].map((_, i) => (

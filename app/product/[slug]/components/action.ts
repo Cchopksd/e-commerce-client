@@ -1,7 +1,6 @@
 "use server";
 
 import { decryptToken, getToken } from "@/app/utils/token";
-import { RiContactsBookLine } from "react-icons/ri";
 
 const hostname = process.env.HOST_NAME;
 
@@ -57,7 +56,6 @@ export const addToCart = async (
       }),
     });
     const result = await resource.json();
-    console.log(result);
     if (!resource.ok) {
       console.error(`HTTP error! status: ${resource.status}`);
     }
@@ -96,7 +94,7 @@ export const favoriteProduct = async ({
         is_favorite,
       }),
     }).then((res) => res.json());
-    console.log(resource);
+
     return resource;
   } catch (error) {
     console.log(error);

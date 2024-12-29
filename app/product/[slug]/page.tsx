@@ -13,7 +13,7 @@ interface ProductResult {
 }
 
 export default async function page({ params }: { params: { slug: string } }) {
-  const { slug } = await params;
+  const { slug } = params;
   const token = await getToken();
   const userInfo = await decryptToken(token);
   const product_slug = slug.split("-").pop();

@@ -18,8 +18,21 @@ export default function Content({ product }: { product: any }) {
   const { address, cart } = product;
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
 
+  const calculateTotal = () => {
+    return cart.reduce(
+      (total: number, item: any) =>
+        total +
+        (item.product_id.discount ?? item.product_id.price).toLocaleString() *
+          item.quantity,
+      0,
+    );
+  };
+
   const checkoutItem = async () => {
     if (selectedPayment === "PromptPay") {
+      if (calculateTotal() < 20) {
+        return alert("amount must be greater than or equal to ฿20");
+      }
       try {
         const result = await payWithPromptPay({
           type: "promptpay",
@@ -38,14 +51,6 @@ export default function Content({ product }: { product: any }) {
     } else {
       console.warn("Selected payment method is not supported.");
     }
-  };
-
-  const calculateTotal = () => {
-    return cart.reduce(
-      (total: number, item: any) =>
-        total + item.product_id.price * item.quantity,
-      0,
-    );
   };
 
   return (
@@ -104,13 +109,19 @@ export default function Content({ product }: { product: any }) {
                     </span>
                   </td>
                   <td className="py-4 px-4 text-gray-600 text-right">
-                    {item.product_id.price} ฿
+                    {(
+                      item.product_id.discount ?? item.product_id.price
+                    ).toLocaleString()}{" "}
+                    ฿
                   </td>
                   <td className="py-4 px-4 text-gray-600 text-right">
                     {item.quantity}
                   </td>
                   <td className="py-4 px-4 font-semibold text-blue-600 text-right">
-                    {item.product_id.price * item.quantity} ฿
+                    {(
+                      item.product_id.discount ?? item.product_id.price
+                    ).toLocaleString() * item.quantity}{" "}
+                    ฿
                   </td>
                 </tr>
               ))}
@@ -123,7 +134,11 @@ export default function Content({ product }: { product: any }) {
               <span className="mr-2">ราคารวม:</span>
               {cart.reduce(
                 (total: number, item: any) =>
-                  total + item.product_id.price * item.quantity,
+                  total +
+                  (
+                    item.product_id.discount ?? item.product_id.price
+                  ).toLocaleString() *
+                    item.quantity,
                 0,
               )}{" "}
               ฿

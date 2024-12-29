@@ -21,9 +21,8 @@ export enum OrderStatus {
   All = "all",
   Unpaid = "unpaid",
   Paid = "paid",
-  Preparing = "preparing",
+  InProcess = "in-process",
   Cancelled = "cancelled",
-  Delivering = "delivering",
   Delivered = "delivered",
   Refund = "refund",
   Refunded = "refunded",
@@ -128,7 +127,7 @@ const StatusActions = ({
       {status === OrderStatus.Paid && (
         <>
           <ActionButton
-            onClick={() => onUpdateStatus(OrderStatus.Preparing)}
+            onClick={() => onUpdateStatus(OrderStatus.InProcess)}
             icon={<PackageCheck className="w-4 h-4" />}
             label="เริ่มจัดเตรียมสินค้า"
             variant="success"
@@ -137,28 +136,18 @@ const StatusActions = ({
           <ActionButton
             onClick={() => onUpdateStatus(OrderStatus.Cancelled)}
             icon={<Ban className="w-4 h-4" />}
-            label="ยเลิกออเดอร์"
+            label="ยกเลิกออเดอร์"
             variant="danger"
             isLoading={isLoading}
           />
         </>
       )}
 
-      {status === OrderStatus.Preparing && (
-        <ActionButton
-          onClick={() => onUpdateStatus(OrderStatus.Delivering)}
-          icon={<Truck className="w-4 h-4" />}
-          label="เริ่มจัดส่งสินค้า"
-          variant="success"
-          isLoading={isLoading}
-        />
-      )}
-
-      {status === OrderStatus.Delivering && (
+      {status === OrderStatus.InProcess && (
         <ActionButton
           onClick={() => onUpdateStatus(OrderStatus.Delivered)}
-          icon={<PackageCheck className="w-4 h-4" />}
-          label="ยืนยันจัดส่งแล้ว"
+          icon={<Truck className="w-4 h-4" />}
+          label="เริ่มจัดส่งสินค้า"
           variant="success"
           isLoading={isLoading}
         />
@@ -302,7 +291,7 @@ export default function Toolbar({ orderStatus, orderId }: ToolbarProps) {
   const onUpdateStatus = async (status: OrderStatus) => {
     try {
       setIsUpdating(true);
-      if (status === OrderStatus.Delivering) {
+      if (status === OrderStatus.Delivered) {
         return setIsUpdatingDelivering(true);
       }
       const result = await updateOrderStatus({

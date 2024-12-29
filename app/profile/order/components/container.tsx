@@ -14,8 +14,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { RootState } from "@/libs/store";
-import { getUserOrders } from "./action";
+import { getUserOrders, updateOrderReceived } from "./action";
 import { useSearchParams } from "next/navigation";
+import { addToCart } from "@/app/cart/components/action";
 
 const getStatusConfig = (status: OrderStatus) => {
   switch (status) {
@@ -26,26 +27,21 @@ const getStatusConfig = (status: OrderStatus) => {
         actionText: "ยังไม่ชำระเงิน",
       };
     case OrderStatus.Paid:
+    case OrderStatus.InProcess:
       return {
         icon: <ShoppingCart className="text-blue-600" />,
         color: "bg-green-500",
         actionText: "กำลังดำเนินการ",
       };
-    case OrderStatus.Preparing:
-      return {
-        icon: <ShoppingCart className="text-blue-600" />,
-        color: "bg-blue-600",
-        actionText: "กำลังดำเนินการ",
-      };
-    case OrderStatus.Delivering:
-      return {
-        icon: <Truck className="text-green-600" />,
-        color: "bg-green-600",
-        actionText: "ที่ต้องได้รับ",
-      };
     case OrderStatus.Delivered:
       return {
-        icon: <CheckCircle className="text-green-700" />,
+        icon: <CheckCircle className="text-orange-500" />,
+        color: "bg-orange-500",
+        actionText: "ที่ต้องได้รับ",
+      };
+    case OrderStatus.Successfully:
+      return {
+        icon: <CheckCircle className="text-orange-700" />,
         color: "bg-green-700",
         actionText: "สำเร็จ",
       };
@@ -114,6 +110,17 @@ export default function OrderContainer({
     }
   };
 
+  const handleCartSubmit = async (product_ids: string[]) => {
+    try {
+      const addProductPromises = product_ids.map((item) => addToCart(item, 1));
+      await Promise.all(addProductPromises);
+
+      window.location.href = "/cart";
+    } catch (error) {
+      console.error("Cart submission error:", error);
+    }
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -140,6 +147,13 @@ export default function OrderContainer({
       ),
     }));
   }, [orderList]);
+
+  const updateOrderSuccess = async (order_id: string) => {
+    const result = await updateOrderReceived(order_id);
+    if (result.statusCode == 200) {
+      window.location.href = "order?status=successfully";
+    }
+  };
 
   return (
     <section className="w-full h-full flex flex-col gap-4">
@@ -212,12 +226,23 @@ export default function OrderContainer({
                   </div>
 
                   <div className="flex justify-end gap-4 mt-6">
+                    {order.status == "successfully" && (
+                      <button
+                        // onClick={() => openReviewModal(order.id)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        ให้คะแนนและรีวิว
+                      </button>
+                    )}
                     {order.items.length > 0 && (
-                      <a
-                        href={`/product/${order.items[0].product_id._id}`}
+                      <button
+                        onClick={() =>
+                          handleCartSubmit(
+                            order.items.map((item) => item.product_id._id),
+                          )
+                        }
                         className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                         ซื้ออีกครั้ง
-                      </a>
+                      </button>
                     )}
                     <a
                       href={`/profile/order/${order._id}`}
@@ -225,11 +250,21 @@ export default function OrderContainer({
                       ดูรายละเอียด
                     </a>
 
-                    <a
-                      href={`/payment/${order.payment_id}`}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                      ชำระเงิน
-                    </a>
+                    {order.status === "unpaid" ? (
+                      <a
+                        href={`/payment/${order.payment_id}`}
+                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        ชำระเงิน
+                      </a>
+                    ) : order.status === "delivered" ? (
+                      <button
+                        onClick={() => updateOrderSuccess(order._id)}
+                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+                        ได้รับแล้ว
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,10 +1,13 @@
 "use client";
+
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { intervalToDuration, format } from "date-fns";
 import { th } from "date-fns/locale";
+import io from "socket.io-client";
 
 interface TransactionDetails {
+  charge_id: string;
   image: string;
   status: string;
   return_uri: string;
@@ -21,20 +24,31 @@ interface Payment {
   transaction_details: TransactionDetails;
 }
 
+interface PaymentContentProps {
+  paymentDetail: Payment;
+  userDetail: any;
+}
+
 export default function PaymentContent({
   paymentDetail,
-}: {
-  paymentDetail: Payment;
-}) {
+  userDetail,
+}: PaymentContentProps) {
+  const status = paymentDetail.status;
+  const [timeLeft, setTimeLeft] = useState<string>("loading...");
+  const [error, setError] = useState<string | null>(null);
   const expirationDate = paymentDetail?.transaction_details?.expires_at;
   const imageSrc = paymentDetail?.transaction_details?.image;
+  const user_id = userDetail.sub;
+  const charge_id = paymentDetail?.transaction_details?.charge_id;
 
   const formattedExpirationDate = expirationDate
-    ? format(new Date(expirationDate), "dd MMM yyyy, HH : mm", { locale: th })
+    ? format(new Date(expirationDate), "dd MMM yyyy, HH:mm", { locale: th })
     : "N/A";
 
-  const calculateTimeLeft = () => {
-    if (!expirationDate) return "00:00:00";
+  const calculateTimeLeft = useCallback(() => {
+    if (!expirationDate || isNaN(new Date(expirationDate).getTime())) {
+      return "00:00:00";
+    }
 
     const now = new Date();
     const expirationTime = new Date(expirationDate);
@@ -43,32 +57,71 @@ export default function PaymentContent({
       return "expired";
     }
 
-    const durationLeft = intervalToDuration({
+    const duration = intervalToDuration({
       start: now,
       end: expirationTime,
     });
 
-    const hours = String(durationLeft.hours || 0).padStart(2, "0");
-    const minutes = String(durationLeft.minutes || 0).padStart(2, "0");
-    const seconds = String(durationLeft.seconds || 0).padStart(2, "0");
-
-    return `${hours} : ${minutes} : ${seconds}`;
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+    return `${String(duration.hours || 0).padStart(2, "0")} : ${String(
+      duration.minutes || 0,
+    ).padStart(2, "0")} : ${String(duration.seconds || 0).padStart(2, "0")}`;
+  }, [expirationDate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const newTimeLeft = calculateTimeLeft();
+      setTimeLeft(newTimeLeft);
+
+      if (newTimeLeft === "expired") {
+        clearInterval(timer);
+      }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [expirationDate]);
+  }, [calculateTimeLeft]);
+
+  useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_HOST_NAME, {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to WebSocket server:", socket.id);
+      socket.emit("register", { user_id, charge_id });
+    });
+
+    socket.on(
+      "payment-status",
+      (data: { status: string; charge_id: string }) => {
+        if (data.charge_id === charge_id) {
+          console.log("Payment status updated:", data.status);
+
+          if (data.status === "paid") {
+            window.location.href = "/";
+          }
+        }
+      },
+    );
+
+    socket.on("connect_error", (err) => {
+      console.error("WebSocket connection error:", err);
+      setError("Connection error. Please refresh the page.");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket server");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [charge_id, user_id]);
 
   return (
     <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md lg:max-w-2xl rounded-xl shadow-lg overflow-hidden">
-        {/* Payment Amount Section */}
         <div className="bg-blue-50 p-4 border-b">
           <div className="flex justify-between items-center">
             <span className="text-gray-600">ยอดชำระเงินทั้งหมด</span>
@@ -82,7 +135,26 @@ export default function PaymentContent({
           </div>
         </div>
 
-        {/* Expiration Section */}
+        <div className="p-4 border-b">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">สถานะการชำระเงิน</span>
+            <span
+              className={`font-semibold ${
+                status === "paid"
+                  ? "text-green-600"
+                  : status === "pending"
+                  ? "text-yellow-600"
+                  : "text-red-600"
+              }`}>
+              {status === "paid"
+                ? "ชำระเงินแล้ว"
+                : status === "pending"
+                ? "รอการชำระเงิน"
+                : "ยกเลิก"}
+            </span>
+          </div>
+        </div>
+
         <div className="p-4 border-b">
           <div className="flex justify-between items-center">
             <span className="text-gray-600">กรุณาชำระภายใน</span>
@@ -105,9 +177,8 @@ export default function PaymentContent({
           </div>
         </div>
 
-        {/* QR Code Section */}
-        {imageSrc && timeLeft !== "expired" && (
-          <div className="p-4 flex justify-center">
+        {imageSrc && timeLeft !== "expired" && status !== "paid" && (
+          <div className="p-4 flex flex-col items-center">
             <div className="w-full max-w-64 lg:max-w-80 h-full bg-white p-4 rounded-lg shadow-md">
               <Image
                 src={imageSrc}
@@ -121,40 +192,25 @@ export default function PaymentContent({
           </div>
         )}
 
-        {/* Payment Instructions Section */}
         <div className="bg-gray-50 p-4">
           <h4 className="text-lg font-semibold mb-4 text-center">
-            กรุณาทำตามขั้นตอนที่แนะนำ
+            ขั้นตอนการชำระเงิน
           </h4>
           <ol className="list-decimal list-inside space-y-3 text-sm text-gray-700">
-            <li>คลิกปุ่ม &quot;บันทึก QR&quot; หรือแคปหน้าจอ</li>
-            <li>เปิดแอปพลิเคชันธนาคารบนอุปกรณ์ของท่าน</li>
-            <li>
-              เลือกไปที่ปุ่ม &quot;สแกน&quot; หรือ &quot;QR Code&quot; และเลือก
-              &quot;รูปภาพ&quot;
-            </li>
-            <li>
-              เลือกรูปภาพที่ท่านแคปไว้และทำการชำระเงิน
-              โดยตรวจสอบชื่อบัญชีผู้รับคือ &quot;
-              &quot;
-            </li>
-            <li>
-              หลังจากชำระเงินเสร็จสิ้น กรุณากลับไปตรวจสอบสถานะการชำระเงินในแอป
-               หากสถานะยังไม่มีการอัปเดต กรุณาติดต่อฝ่ายลูกค้าสัมพันธ์
-               ที่เบอร์ 
-            </li>
-            <li>
-              <strong>หมายเหตุ:</strong> QR สามารถสแกนได้เพียง 1
-              ครั้งต่อการชำระเงิน หากต้องการสแกนใหม่ โปรดรีเฟรช QR ก่อน
-            </li>
+            <li>บันทึก QR Code หรือถ่ายภาพหน้าจอ</li>
+            <li>เปิดแอปพลิเคชันธนาคารของท่าน</li>
+            <li>เลือกสแกน QR Code จากรูปภาพที่บันทึกไว้</li>
+            <li>ตรวจสอบยอดเงินและทำการชำระเงิน</li>
+            <li>รอระบบอัพเดทสถานะการชำระเงิน (ไม่เกิน 1-2 นาที)</li>
           </ol>
 
-          <div className="mt-4 bg-yellow-50 p-3 rounded-md text-xs text-gray-600 text-center">
-            <p>** หมายเหตุเพิ่มเติม: **</p>
-            <p>
-              ช่องทางการชำระเงินพร้อมเพย์สามารถใช้ได้กับแอปพลิเคชันธนาคารเท่านั้น
-            </p>
-            <p>ไม่สามารถชำระผ่านสาขาธนาคารหรือตู้เอทีเอ็มได้</p>
+          <div className="mt-4 bg-yellow-50 p-3 rounded-md text-xs text-gray-600">
+            <p className="text-center font-semibold mb-2">หมายเหตุ:</p>
+            <ul className="space-y-1">
+              <li>• QR Code สามารถใช้ได้เพียงครั้งเดียวเท่านั้น</li>
+              <li>• รองรับการชำระผ่านแอปพลิเคชันธนาคารเท่านั้น</li>
+              <li>• ไม่สามารถชำระผ่านสาขาธนาคารหรือตู้ ATM</li>
+            </ul>
           </div>
         </div>
       </div>

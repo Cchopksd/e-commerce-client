@@ -29,7 +29,6 @@ export const decryptToken = async (token: string) => {
 
     return payload as DecodedToken;
   } catch (error) {
-    console.error("Token decryption error:", error);
     return undefined;
   }
 };

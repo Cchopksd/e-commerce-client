@@ -47,7 +47,7 @@ export default function ProductContent({ product, token, favorite }: Product) {
 
   const handleFavoriteToggle = async (isFavorite: boolean) => {
     setIsFavorite(isFavorite);
-    const favorite = await favoriteProduct({
+    await favoriteProduct({
       product_id: product._id,
       is_favorite: isFavorite,
     });
@@ -73,8 +73,7 @@ export default function ProductContent({ product, token, favorite }: Product) {
 
     setIsAdding(true);
     try {
-      const result = await addToCart(token, product._id, value);
-      console.log(result);
+      await addToCart(token, product._id, value);
     } catch (error) {
       console.error("Cart submission error:", error);
     } finally {
