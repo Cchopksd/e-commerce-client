@@ -107,9 +107,6 @@ export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
         </div>
       </section>
 
-      <section className="w-full max-w-[1440px] mx-auto py-10 p-4">
-        <TopCategories />
-      </section>
       <section className="w-full max-w-[1440px] m-auto relative py-10 px-4">
         <p className="">Popular Products</p>
         <h2 className="">Trending Now</h2>

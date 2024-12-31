@@ -7,6 +7,7 @@ import { CartWithAddress } from "./interface";
 import { Minus, Plus } from "lucide-react";
 import { addToCart, reduceFromCart } from "./action";
 import Swal from "sweetalert2";
+import CartEmpty from "./CartEmpty";
 
 export default function Cart({ cart }: { cart: CartWithAddress }) {
   const [cartItems, setCartItems] = useState(cart.cart);
@@ -88,18 +89,18 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
 
           {/* Desktop Table View */}
           <div className="hidden md:block">
-            <table className="w-full border-collapse shadow-xl my-4 bg-white rounded-2xl">
-              <thead>
-                <tr className="border-b">
-                  <th className="p-4 text-left font-semibold">Product</th>
-                  <th className="p-4 text-center font-semibold">Price</th>
-                  <th className="p-4 text-center font-semibold">Quantity</th>
-                  <th className="p-4 text-center font-semibold">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItems && cartItems.length > 0 ? (
-                  cartItems.map((product, index) => (
+            {cartItems && cartItems.length > 0 ? (
+              <table className="w-full border-collapse shadow-xl my-4 bg-white rounded-2xl">
+                <thead>
+                  <tr className="border-b">
+                    <th className="p-4 text-left font-semibold">Product</th>
+                    <th className="p-4 text-center font-semibold">Price</th>
+                    <th className="p-4 text-center font-semibold">Quantity</th>
+                    <th className="p-4 text-center font-semibold">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cartItems.map((product, index) => (
                     <tr
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors">
@@ -167,16 +168,12 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                         ).toLocaleString()}
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="text-center p-4 text-gray-500">
-                      Your cart is empty.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <CartEmpty />
+            )}
           </div>
 
           {/* Mobile Card View */}
@@ -245,9 +242,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                 </div>
               ))
             ) : (
-              <div className="text-center text-gray-500 p-4">
-                Your cart is empty.
-              </div>
+              <CartEmpty />
             )}
           </div>
         </section>

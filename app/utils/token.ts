@@ -28,8 +28,8 @@ export const decryptToken = async (token: string) => {
     }
 
     return payload as DecodedToken;
-  } catch (error) {
-    return undefined;
+  } catch {
+    return null;
   }
 };
 export const getToken = async () => {

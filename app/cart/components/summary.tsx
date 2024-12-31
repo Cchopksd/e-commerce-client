@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Info, MapPin, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -13,12 +13,14 @@ export default function Summary({
 }) {
   const router = useRouter();
 
+  const [msgErr, setMsgErr] = useState("");
+
   const handleClickCheckout = () => {
     if (address.length == 0) {
-      return alert("กรุณาเพิ่มที่อยู่ของคุณ");
+      return setMsgErr("กรุณาเพิ่มที่อยู่ของคุณ");
     }
-    if (totalPrice == 0){
-      return alert("กรุณาเลือกสินค้า");
+    if (totalPrice == 0) {
+      return setMsgErr("กรุณาเลือกสินค้า");
     }
     router.push("/checkout");
   };
@@ -82,9 +84,7 @@ export default function Summary({
             </>
           ) : (
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-4">
-                ไม่มีที่อยู่จัดส่ง
-              </h3>
+              <h3 className="text-lg font-semibold mb-4">ไม่มีที่อยู่จัดส่ง</h3>
               <button
                 onClick={handleAddAddress}
                 className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
@@ -161,6 +161,9 @@ export default function Summary({
           }}>
           Proceed to Checkout
         </motion.button>
+        {msgErr && (
+          <p className="text-red-600 text-sm mt-2 text-center">{msgErr}</p>
+        )}
       </div>
     </div>
   );

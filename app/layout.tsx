@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Merriweather } from "next/font/google";
+import { Roboto } from "next/font/google";
 
 import ReduxProvider from "./store-provider";
 import Footer from "./components/Footer";
 import Navbar from "./components/navbar/NavbarMain";
 
-const merriweather = Merriweather({
+const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "700"],
   style: "normal",
@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <ReduxProvider>
       <html lang="en">
-        <body className={`${merriweather.className} antialiased`}>
+        <body className={`${roboto.className} antialiased`}>
           <Navbar />
           {auth}
           {children}

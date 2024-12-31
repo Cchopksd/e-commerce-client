@@ -1,26 +1,23 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
-import { useRef, useEffect } from "react";
-import { logout } from "../utils/token";
+import { useEffect, useRef, useState } from "react";
+import { logout } from "./action";
 
-interface NavOption {
-  name: string;
-  path: string;
-}
+const menuItems = [
+  { name: "Profile", path: "/profile" },
+  { name: "Orders", path: "/orders" },
+  { name: "Settings", path: "/settings" },
+];
 
-interface UserMenuProps {
-  isOpen: boolean;
-  onClose: () => void;
-  userMenu: NavOption[];
-}
-
-export default function UserMenu({ isOpen, onClose, userMenu }: UserMenuProps) {
+export default function UserMenu({ userInfo }: { userInfo: any }) {
+  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        onClose();
+        setIsOpen(false);
       }
     };
 
@@ -28,45 +25,47 @@ export default function UserMenu({ isOpen, onClose, userMenu }: UserMenuProps) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
-  if (!isOpen) return null;
-
-  const handleUserLogout = async () => {
-    const result = await logout();
-    if (result) {
-      return (window.location.href = "/");
-    }
+  const handleSignOut = async () => {
+    await logout();
+    window.location.href = "/";
+    setIsOpen(false);
   };
 
   return (
-    <div
-      ref={menuRef}
-      className="absolute top-20 w-48 bg-white rounded-lg shadow-lg z-50">
-      <div className="py-2">
-        {userMenu.map((item: NavOption, index: number) => (
-          <Link
-            key={index}
-            href={item.path}
-            onClick={onClose}
-            className="flex items-center px-4 py-2.5 text-gray-700 hover:bg-[#FEF6F1] hover:text-[#257180] 
-                     transition-all duration-200 text-sm font-medium">
-            {item.name}
-          </Link>
-        ))}
-        <button
-          onClick={() => {
-            onClose();
-            handleUserLogout();
-          }}
-          className="flex items-center px-4 py-2.5 text-gray-700 hover:bg-[#FEF6F1] hover:text-[#257180] 
-                     transition-all duration-200 text-sm font-medium w-full">
-          Logout
-        </button>
-      </div>
+    <div ref={menuRef} className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="h-10 w-10 rounded-full overflow-hidden border-2 hover:border-gray-300 transition-all duration-200">
+        <Image
+          src={userInfo?.profile_image || "/default-avatar.png"}
+          alt="Profile"
+          width={40}
+          height={40}
+          className="w-full h-full object-cover"
+        />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.path}
+              onClick={() => setIsOpen(false)}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+              {item.name}
+            </Link>
+          ))}
+          <button
+            onClick={handleSignOut}
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+            Sign out
+          </button>
+        </div>
+      )}
     </div>
   );
 }

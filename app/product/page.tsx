@@ -25,6 +25,8 @@ export default async function Product({
 
   const product = resourceProduct?.items;
 
+  console.log(resourceProduct, "chopper");
+
   const categories = [
     {
       name: "เสื้อผ้า",
@@ -50,26 +52,38 @@ export default async function Product({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="relative h-[60vh] bg-gray-900 text-white">
-        <Image
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600"
-          alt="Collection Banner"
-          fill
-          className="object-cover opacity-50"
-          priority
-        />
-        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            คอลเลคชั่นใหม่ล่าสุด
-          </h1>
-          <p className="mt-6 max-w-3xl text-xl">
-            ค้นพบสินค้าคุณภาพที่คัดสรรมาเพื่อคุณโดยเฉพาะ
-          </p>
-        </div>
-      </div>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-12">
+        <div className="my-8 flex flex-wrap gap-4 items-center justify-between">
+          <p className="text-sm text-gray-500">
+            แสดงผลลัพธ์ทั้งหมด {totalProduct} รายการ
+          </p>{" "}
+          <div className="flex items-center gap-4">
+            <select className="rounded-md border-gray-300 py-2 px-4">
+              <option>เรียงตามล่าสุด</option>
+              <option>ราคา: ต่ำ - สูง</option>
+              <option>ราคา: สูง - ต่ำ</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+          {product &&
+            product.map((product: any) => (
+              <div key={product._id} className="group relative">
+                <ProductCard product={product} />
+              </div>
+            ))}
+        </div>
+        <div className="mt-12 mb-16 flex justify-center">
+          <Pagination
+            search={`/product?search=${search}`}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            maxVisible={5}
+          />
+        </div>
+
+        <div className="py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {categories.map((category) => (
               <div
@@ -89,88 +103,6 @@ export default async function Product({
                 </h3>
               </div>
             ))}
-          </div>
-        </div>
-
-        <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
-          <div className="flex items-center gap-4">
-            <select className="rounded-md border-gray-300 py-2 px-4">
-              <option>เรียงตามล่าสุด</option>
-              <option>ราคา: ต่ำ - สูง</option>
-              <option>ราคา: สูง - ต่ำ</option>
-            </select>
-            <div className="flex gap-2">
-              <button className="p-2 rounded-md border hover:bg-gray-100">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-              <button className="p-2 rounded-md border hover:bg-gray-100">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h7"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <p className="text-sm text-gray-500">
-            แสดงผลลัพธ์ทั้งหมด {totalProduct} รายการ
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-          {product &&
-            product.map((product: any) => (
-              <div key={product._id} className="group relative">
-                <ProductCard product={product} />
-              </div>
-            ))}
-        </div>
-        <div className="mt-12 mb-16 flex justify-center">
-          <Pagination
-            search={`/product?search=${search}`}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            maxVisible={5}
-          />
-        </div>
-
-        <div className="my-16">
-          <div className="relative rounded-2xl overflow-hidden">
-            <div className="absolute inset-0">
-              <Image
-                src="https://images.unsplash.com/photo-1604147495798-57beb5d6af73?q=80&w=1600"
-                alt="Newsletter background"
-                fill
-                className="object-cover opacity-10"
-              />
-            </div>
-            <div className="relative bg-gray-900 bg-opacity-50 px-6 py-16 sm:px-12 sm:py-24 lg:py-32">
-              <h2 className="text-3xl font-bold text-white">คอลเลคชั่นพิเศษ</h2>
-              <p className="mt-4 max-w-3xl text-xl text-gray-100">
-                ค้นพบสินค้าสุดพิเศษที่คัดสรรมาเพื่อคุณ
-              </p>
-              <button className="mt-8 bg-white text-gray-900 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
-                ดูเพิ่มเติม
-              </button>
-            </div>
           </div>
         </div>
       </main>

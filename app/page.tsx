@@ -1,4 +1,4 @@
-import fetchTrendingProduct from "./components/action";
+import { fetchTrendingProduct } from "./components/action";
 
 import Home from "./components/home/Home";
 
