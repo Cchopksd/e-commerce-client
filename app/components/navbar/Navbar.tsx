@@ -61,17 +61,20 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
     setIsSearchVisible((prev) => !prev);
   };
 
-  const handleSearchSuggestions = useCallback((keywords: string) => {
-    lastInputRef.current = keywords;
+  const handleSearchSuggestions = useCallback((keywordsText: string) => {
+    lastInputRef.current = keywordsText;
 
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
     debounceTimeout.current = setTimeout(async () => {
-      if (keywords === lastInputRef.current && keywords.trim()) {
-        const result = await searchSuggestions(keywords);
+      console.log(keywordsText);
+      if (keywordsText === lastInputRef.current && keywordsText) {
+        const result = await searchSuggestions(keywordsText);
         if (result) {
           setSuggestions(result);
         }
+      } else {
+        setSuggestions([]);
       }
     }, 300);
   }, []);
