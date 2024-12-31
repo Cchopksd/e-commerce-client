@@ -2,7 +2,6 @@ import { decryptToken, getToken } from "@/app/utils/token";
 import React from "react";
 import { getUserOrders } from "./components/action";
 import Container from "./components/container";
-import { OrderStatusBar } from "./components/orderStatus";
 import { OrderStatus } from "./components/Order.interface";
 
 export default async function page({
@@ -31,18 +30,15 @@ export default async function page({
   const currentPage = orders.page_now;
 
   return (
-    <div className="w-full h-full space-y-4">
-      <OrderStatusBar />
-      <div className="flex flex-col gap-4">
-        <Container
-          userId={userInfo.sub}
-          token={token}
-          orders={orderList}
-          totalOrders={totalOrders}
-          totalPage={totalPage}
-          currentPage={currentPage}
-        />
-      </div>
+    <div className="flex flex-col gap-4">
+      <Container
+        userId={userInfo.sub}
+        token={token}
+        orders={orderList}
+        totalOrders={totalOrders}
+        totalPage={totalPage}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

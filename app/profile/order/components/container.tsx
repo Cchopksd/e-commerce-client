@@ -6,7 +6,7 @@ import { Order, OrderStatus } from "./Order.interface";
 import {
   ShoppingCart,
   CreditCard,
-  Truck,
+
   CheckCircle,
   XCircle,
   RefreshCw,
