@@ -1,13 +1,12 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { logout } from "./action";
 
 const menuItems = [
   { name: "Profile", path: "/profile" },
-  { name: "Orders", path: "/orders" },
-  { name: "Settings", path: "/settings" },
+  { name: "Orders", path: "/profile/order" },
+  { name: "Favorite", path: "/profile/favorite" },
 ];
 
 export default function UserMenu({ userInfo }: { userInfo: any }) {
@@ -51,13 +50,13 @@ export default function UserMenu({ userInfo }: { userInfo: any }) {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
           {menuItems.map((item) => (
-            <Link
+            <a
               key={item.name}
               href={item.path}
               onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
               {item.name}
-            </Link>
+            </a>
           ))}
           <button
             onClick={handleSignOut}

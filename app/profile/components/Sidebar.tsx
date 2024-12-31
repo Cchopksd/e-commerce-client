@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -54,39 +53,40 @@ export default function Sidebar({ userInfo }: any) {
     const subMenuClasses = isSubMenu ? "pl-4 text-sm" : "";
 
     return (
-      <Link
+      <a
         href={item.path}
         className={`${baseClasses} ${
           isActivePath(item.path) ? activeClasses : inactiveClasses
         } ${subMenuClasses}`}>
         {item.name}
-      </Link>
+      </a>
     );
   };
 
   return (
-    <aside
-      className="w-full max-w-72"
-     >
+    <aside className="w-full md:max-w-72 transition-all duration-300 ease-in-out">
       <nav className="bg-white rounded-lg shadow-lg overflow-hidden">
         {/* User Profile Section */}
-        <div className="px-4 py-6 text-left">
-          <div className="flex flex-col items-center space-y-3">
-            <div className="w-20 h-20 relative">
+        <div className="px-3 md:px-4 py-4 md:py-6 text-left">
+          <div className="flex flex-col items-center space-y-2 md:space-y-3">
+            <div className="w-16 h-16 md:w-20 md:h-20 relative">
               <Image
                 src={userInfo.profile_image}
                 alt={`${userInfo.username}'s profile`}
                 fill
                 className="rounded-full object-cover bg-white shadow-md p-1"
+                sizes="(max-width: 768px) 4rem, 5rem"
               />
             </div>
-            <h4 className="text-lg font-semibold">{userInfo.username}</h4>
+            <h4 className="text-base md:text-lg font-semibold">
+              {userInfo.username}
+            </h4>
           </div>
 
-          <hr className="my-4" />
+          <hr className="my-3 md:my-4" />
 
           {/* Navigation Menu */}
-          <div className="space-y-2">
+          <div className="space-y-1 md:space-y-2">
             {menu.map((item, index) => (
               <div key={index}>
                 <MenuLink item={item} />
@@ -98,7 +98,7 @@ export default function Sidebar({ userInfo }: any) {
                         ? { height: "auto", opacity: 1 }
                         : { height: 0, opacity: 0 }
                     }
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
                     className="overflow-hidden">
                     {item.sub.map((subItem, subIndex) => (
                       <MenuLink key={subIndex} item={subItem} isSubMenu />
