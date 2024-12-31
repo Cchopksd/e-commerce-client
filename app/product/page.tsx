@@ -25,8 +25,6 @@ export default async function Product({
 
   const product = resourceProduct?.items;
 
-  console.log(resourceProduct, "chopper");
-
   const categories = [
     {
       name: "เสื้อผ้า",
@@ -53,7 +51,7 @@ export default async function Product({
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="my-8 flex flex-wrap gap-4 items-center justify-between">
+        <div className="py-8 flex flex-wrap gap-4 items-center justify-between">
           <p className="text-sm text-gray-500">
             แสดงผลลัพธ์ทั้งหมด {totalProduct} รายการ
           </p>{" "}
