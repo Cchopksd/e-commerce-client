@@ -1,5 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface Form {
   email: string;
@@ -41,6 +42,20 @@ export async function login({ email, password }: Form) {
     });
 
     return result;
+  } catch (error: any) {
+    console.error("Error during login:", error);
+    throw error;
+  }
+}
+
+export async function loginWithGoogle() {
+  const HOST = process.env.HOST_NAME;
+  try {
+    const response = await fetch(`${HOST}/auth/google`, {
+      method: "GET",
+    }).then((res) => res.json());
+
+    return redirect(response.url);
   } catch (error: any) {
     console.error("Error during login:", error);
     throw error;

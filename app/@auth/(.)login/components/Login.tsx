@@ -1,15 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { login } from "./action";
-import { FaRegEyeSlash } from "react-icons/fa";
-import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { BiCheckCircle } from "react-icons/bi";
+import { FcGoogle } from "react-icons/fc";
+import { login, loginWithGoogle } from "./action";
 
-export default function Login() {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState({
     email: "",
     password: "",
@@ -21,20 +20,12 @@ export default function Login() {
     if (!email) {
       setErrMessage((prev) => ({ ...prev, email: "Email is required" }));
     }
-
     if (!password) {
-      setErrMessage((prev) => ({
-        ...prev,
-        password: "Password is required",
-      }));
+      setErrMessage((prev) => ({ ...prev, password: "Password is required" }));
     }
-
-    if (!email || !password) {
-      return;
-    }
+    if (!email || !password) return;
 
     setErrMessage({ email: "", password: "", result: "" });
-
     try {
       const response = await login({ email, password });
       if (response.statusCode === 200) {
@@ -47,64 +38,99 @@ export default function Login() {
         result:
           error.message || "An unexpected error occurred. Please try again.",
       }));
-    }
+    } // Regular login logic here
   };
+
+  const handleGoogleLogin = async () => {
+    await loginWithGoogle();
+  };
+
   return (
-    <div className="flex flex-col w-full space-y-8">
-      <h2 className="text-center uppercase">login</h2>
-      <section className="flex flex-col gap-4">
-        <section>
-          <label htmlFor="email">Email:</label>
-          <div className="relative w-full h-10 ">
+    <div className="w-full max-w-md mx-auto p-6 space-y-6">
+      <h2 className="text-2xl font-bold text-center text-gray-800 uppercase">
+        Login
+      </h2>
+
+      <form className="space-y-4">
+        <div className="space-y-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <div className="relative">
             <input
-              type="text"
+              type="email"
               id="email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              className="border-1 rounded-md w-full h-full px-2 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full h-12 px-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder="Enter your email"
             />
+            {errMessage.email && (
+              <p className="mt-1 text-sm text-red-500">{errMessage.email}</p>
+            )}
           </div>
-          {errMessage && errMessage.email && (
-            <p className="text-red-500">{errMessage.email}</p>
-          )}
-        </section>
-        <section>
-          <label htmlFor="password">Password:</label>
-          <div className="relative w-full h-10 ">
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              className="border-1 rounded-md w-full h-full px-2 pr-10 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-12 px-4 pr-12 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              placeholder="Enter your password"
             />
             <button
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="flex gap-1 items-center absolute top-1/2 -translate-y-1/2 right-3">
-              | {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+              {showPassword ? (
+                <FaRegEye className="text-xl" />
+              ) : (
+                <FaRegEyeSlash className="text-xl" />
+              )}
             </button>
+            {errMessage.password && (
+              <p className="mt-1 text-sm text-red-500">{errMessage.password}</p>
+            )}
           </div>
-          {errMessage && errMessage.password && (
-            <p className="text-red-500">{errMessage.password}</p>
-          )}
-        </section>
-      </section>
-      {errMessage && errMessage.result && (
-        <p className="text-red-500 bg-red-300 p-2 px-4 rounded-lg flex gap-4 items-center">
-          <BiCheckCircle />
-          {errMessage.result}
-        </p>
-      )}
+        </div>
+
+        {errMessage.result && (
+          <div className="p-3 bg-red-100 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
+            <BiCheckCircle className="text-xl flex-shrink-0" />
+            <span>{errMessage.result}</span>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="w-full h-12 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors uppercase">
+          Login
+        </button>
+      </form>
+      <div className="relative flex items-center">
+        <div className="flex-grow border-t border-gray-300"></div>
+        <span className="flex-shrink mx-4 text-gray-600">or</span>
+        <div className="flex-grow border-t border-gray-300"></div>
+      </div>
       <button
-        type="submit"
-        onClick={handleSubmit}
-        className="bg-blue-500 text-white uppercase font-semibold shadow-md rounded-md h-10 ">
-        Login
+        onClick={handleGoogleLogin}
+        className="w-full h-12 px-6 flex items-center justify-center gap-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+        <FcGoogle className="text-xl" />
+        <span className="text-gray-700">Continue with Google</span>
       </button>
     </div>
   );
-}
+};
+
+export default Login;

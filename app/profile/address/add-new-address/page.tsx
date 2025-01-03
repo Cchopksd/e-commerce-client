@@ -2,21 +2,17 @@
 import React, { useState } from "react";
 import { X, Plus, MapPin } from "lucide-react";
 import AddressSelection from "./AddressSelection";
+import { createNewAddress } from "./action";
 
-interface AddressFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const AddAddressModal: React.FC<AddressFormProps> = () => {
-  const [step, setStep] = useState("default");
+const AddAddressModal = () => {
+  const [step, setStep] = useState<"default" | "province">("default");
 
   const [addressData, setAddressData] = useState({
     name: "",
     province: "",
     district: "",
     subdistrict: "",
-    post_id: "",
+    post_id: 0,
     detail: "",
     default: false,
   });
@@ -33,20 +29,23 @@ const AddAddressModal: React.FC<AddressFormProps> = () => {
   };
 
   const handleAddressSelect = (address: any) => {
-    console.log("Selected Address:", address);
     setAddressData((prev) => ({
       ...prev,
       ...address,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // onSubmit({
-    //   ...formData,
-    //   post_id: parseInt(formData.post_id || "0"),
-    // });
+    const response = await createNewAddress({ address: addressData });
+
+    if (response) {
+      window.location.href = "/profile/address";
+    }
   };
+
+  const locationDisplay =
+    `${addressData.province} ${addressData.district} ${addressData.subdistrict}`.trim();
 
   return (
     <section className="max-w-4xl mx-auto p-4 md:p-8 bg-white shadow-lg rounded-xl">
@@ -60,7 +59,7 @@ const AddAddressModal: React.FC<AddressFormProps> = () => {
         </button>
       </div>
 
-      {step == "default" ? (
+      {step === "default" ? (
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
             <label
@@ -83,20 +82,20 @@ const AddAddressModal: React.FC<AddressFormProps> = () => {
           <div className="grid gap-4">
             <div>
               <label
-                htmlFor="province"
+                htmlFor="location"
                 className="block text-sm font-medium text-gray-700 mb-1">
-                Province, District, subdistrict
+                Province, District, Subdistrict
               </label>
               <input
                 type="text"
-                id="province"
-                name="province"
-                value={addressData.province}
-                onChange={handleChange}
+                id="location"
+                name="location"
+                value={locationDisplay}
+                readOnly
                 onClick={() => setStep("province")}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Province, District, subdistrict"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                placeholder="Select location"
               />
             </div>
           </div>
@@ -152,6 +151,7 @@ const AddAddressModal: React.FC<AddressFormProps> = () => {
       ) : (
         <div className="p-4 space-y-4">
           <AddressSelection
+            setStep={setStep}
             addressData={addressData}
             onAddressSelect={handleAddressSelect}
           />

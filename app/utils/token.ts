@@ -29,7 +29,7 @@ export const decryptToken = async (token: string) => {
 
     return payload as DecodedToken;
   } catch {
-    return null;
+    return "";
   }
 };
 export const getToken = async () => {

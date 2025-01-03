@@ -6,9 +6,12 @@ export const fetchTrendingProduct = async () => {
   const hostname = process.env.HOST_NAME;
   const token = await getToken();
   const userInfo = await decryptToken(token);
+
+  const user_id = userInfo ? userInfo?.sub : "";
+
   try {
     const resource = await fetch(
-      `${hostname}/product/trending-product?user_id=${userInfo?.sub}`,
+      `${hostname}/product/trending-product?user_id=${user_id}`,
       {
         method: "GET",
         cache: "no-store",

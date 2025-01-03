@@ -52,7 +52,7 @@ const TrendingProductComponent = ({
           {trendingProduct.map((product: any) => (
             <SwiperSlide key={product._id}>
               <div className="flex justify-center">
-                <ProductCard product={product} />
+                <ProductCard product={product} isFavorite={product.favorite} />
               </div>
             </SwiperSlide>
           ))}
