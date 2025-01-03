@@ -4,6 +4,7 @@ import { decryptToken } from "./app/utils/token";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const referer = request.headers.get("referer");
 
   // Handle public routes that don't need authentication
   if (pathname === "/login") {
