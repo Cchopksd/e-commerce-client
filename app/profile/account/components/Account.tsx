@@ -95,7 +95,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
       }
 
       // Clear previous errors
-      const { profileImage, ...restErrors } = errors;
+      const { ...restErrors } = errors;
       setErrors(restErrors);
 
       // Create preview and set file
@@ -198,7 +198,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
             <input
               type={type}
               name={name}
-              value={value}
+              value={Array.isArray(value) ? "" : value}
               onChange={handleChange}
               className={`w-full px-4 py-2 border rounded-lg 
                 ${
@@ -215,7 +215,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
           </div>
         ) : (
           <div className="px-4 py-2 bg-gray-50 rounded-lg text-gray-800">
-            {value}
+            {Array.isArray(value)
+              ? value.map((img) => (
+                  <Image
+                    key={img.public_id}
+                    src={img.image_url}
+                    alt="Profile"
+                    width={50}
+                    height={50}
+                    className="inline-block rounded-full"
+                  />
+                ))
+              : value}
           </div>
         )}
       </div>
@@ -225,9 +236,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
   const renderImageUpload = () => {
     return (
       <div className="col-span-full">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Profile Picture
-        </label>
         {isEditing ? (
           <div className="flex items-center space-x-4">
             <div className="relative">

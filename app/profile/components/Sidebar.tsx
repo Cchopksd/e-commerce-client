@@ -23,6 +23,10 @@ export default function Sidebar({ userInfo }: any) {
           name: "Reset Password",
           path: "/profile/account/reset-password",
         },
+        {
+          name: "debit/credit card",
+          path: "/profile/account/payment",
+        },
       ],
     },
     {
