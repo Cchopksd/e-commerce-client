@@ -1,13 +1,19 @@
 "use server";
 import { cookies } from "next/headers";
+import { decryptToken, getToken } from "../utils/token";
 
 export const fetchTrendingProduct = async () => {
   const hostname = process.env.HOST_NAME;
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
   try {
-    const resource = await fetch(`${hostname}/product/trending-product`, {
-      method: "GET",
-      cache: "no-store",
-    });
+    const resource = await fetch(
+      `${hostname}/product/trending-product?user_id=${userInfo?.sub}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      },
+    );
     const result = await resource.json();
     if (!resource.ok) {
       console.error("Response Error:", {
@@ -28,7 +34,6 @@ export const searchSuggestions = async (
   keywords: string,
 ): Promise<any[] | null> => {
   const hostname = process.env.HOST_NAME;
-
 
   if (!hostname) {
     console.error("HOST_NAME is not defined in the environment variables.");

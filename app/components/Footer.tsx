@@ -2,7 +2,6 @@
 import React from "react";
 import {
   CreditCard,
-  Smartphone,
   QrCode,
   Phone,
   Mail,
@@ -62,15 +61,7 @@ const Footer = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Smartphone className="w-5 h-5 text-green-400" />
-                <div>
-                  <p className="font-medium">Mobile Banking</p>
-                  <p className="text-sm text-gray-400">
-                    All major Thai banks supported
-                  </p>
-                </div>
-              </div>
+              
             </div>
           </div>
 
@@ -80,11 +71,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5" />
-                <p>+66 2 123 4567</p>
+                <p>095 045 8714</p>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5" />
-                <p>support@example.com</p>
+                <p>kasidit.suwa@gmail.com</p>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5" />
@@ -130,21 +121,10 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Payment Icons */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="flex flex-wrap gap-4 justify-center items-center">
-            {/* Replace these divs with actual payment method logos */}
-            <div className="bg-white p-2 rounded-md w-12 h-8"></div>
-            <div className="bg-white p-2 rounded-md w-12 h-8"></div>
-            <div className="bg-white p-2 rounded-md w-12 h-8"></div>
-            <div className="bg-white p-2 rounded-md w-12 h-8"></div>
-            <div className="bg-white p-2 rounded-md w-12 h-8"></div>
-          </div>
-        </div>
 
         {/* Copyright */}
         <div className="mt-8 text-center text-sm text-gray-400">
-          <p>© 2024 Your Company Name. All rights reserved.</p>
+          <p>© 2024 Kiramiz. All rights reserved.</p>
         </div>
       </div>
     </footer>

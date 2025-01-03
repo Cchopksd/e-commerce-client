@@ -18,17 +18,9 @@ export default async function page({ params }: { params: { slug: string } }) {
   const userInfo = await decryptToken(token);
   const product_slug = slug.split("-").pop();
 
-  if (!product_slug) {
-    return <div>No product slug</div>;
-  }
-
-  if (!userInfo) {
-    return console.log("something went wrong");
-  }
-
   const productResult: ProductResult = await fetchProductByID({
-    product_id: product_slug,
-    user_id: userInfo?.sub,
+    product_id: product_slug || "",
+    user_id: (userInfo?.sub as string) || "",
   });
 
   return (

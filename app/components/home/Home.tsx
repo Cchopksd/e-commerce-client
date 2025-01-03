@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Banner from "../Banner";
-import TrendingProductComponent from "./TrendingProducts";
+// import TrendingProductComponent from "./TrendingProducts";
 
 import ProductImage from "@/public/icons/cat/products.png";
 import CouponImage from "@/public/icons/cat/ticket.png";
@@ -9,7 +9,12 @@ import SaleImage from "@/public/icons/cat/hot-sale.png";
 import BannerImage from "@/public/images/banner/product1.png";
 import ProductWithCategory from "../ProductWithCategory";
 import { ArrowRight } from "lucide-react";
-import TopCategories from "../Category";
+
+import dynamic from "next/dynamic";
+
+const TrendingProductComponent = dynamic(() => import("./TrendingProducts"), {
+  ssr: false,
+});
 
 export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
   const buttons = [

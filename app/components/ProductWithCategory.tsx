@@ -46,10 +46,9 @@ const ProductGrid = ({ trendingProduct }: { trendingProduct: Product[] }) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {trendingProduct.map((product) => (
-          <div
-            key={product._id}
-            className="bg-white rounded-xl shadow-sm transition-all duration-200  hover:scale-105">
-            <ProductCard product={product} />
+          <div key={product._id}>
+            <>{product.favorite}</>
+            <ProductCard product={product} isFavorite={product.favorite} />
           </div>
         ))}
       </div>

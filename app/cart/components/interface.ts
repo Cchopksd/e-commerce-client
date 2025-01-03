@@ -13,6 +13,7 @@ export interface Product {
   detail: string;
   amount: number;
   sale_out: number;
+  favorite: boolean;
   createdAt: string;
   updatedAt: string;
 }
