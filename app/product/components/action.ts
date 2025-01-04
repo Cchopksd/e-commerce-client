@@ -1,5 +1,7 @@
 "use server";
 
+import { decryptToken, getToken } from "@/app/utils/token";
+
 export default async function fetchAllProduct({
   search,
   page,
@@ -8,9 +10,12 @@ export default async function fetchAllProduct({
   page: number;
 }) {
   const hostname = process.env.HOST_NAME;
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
+
   try {
     const resource = await fetch(
-      `${hostname}/product?search=${search}&page=${page}`,
+      `${hostname}/product?search=${search}&page=${page}&user_id=${userInfo?.sub}`,
       {
         method: "GET",
         cache: "no-store",

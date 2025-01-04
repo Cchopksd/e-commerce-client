@@ -168,9 +168,7 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                   )}
               </div>
 
-              <a
-                href="/cart"
-                className="hover:text-gray-600 transition-colors">
+              <a href="/cart" className="hover:text-gray-600 transition-colors">
                 <BiCart size={24} />
               </a>
               {userInfo ? (
@@ -192,9 +190,7 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                 aria-label="Toggle search">
                 <BiSearch size={24} />
               </button>
-              <a
-                href="/cart"
-                className="hover:text-gray-600 transition-colors">
+              <a href="/cart" className="hover:text-gray-600 transition-colors">
                 <BiCart size={24} />
               </a>
               {userInfo ? (

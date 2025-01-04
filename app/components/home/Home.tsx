@@ -126,7 +126,7 @@ export default function Home({ trendingProduct }: { trendingProduct: any[] }) {
           <Image
             src={BannerImage}
             alt="Elegant shopping display"
-            className="w-full h-full object-cover rounded-lg md:rounded-2xl shadow-xl"
+            className="hidden md:flex w-full h-full object-cover aspect-square md:aspect-[16/9] rounded-lg md:rounded-2xl shadow-xl"
           />
 
           {/* Overlay Card */}

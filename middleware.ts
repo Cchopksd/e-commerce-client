@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
         httpOnly: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 24 * 60 * 60 * 1000 * 7, // 24 hours
         path: "/",
       });
       return response;

@@ -64,14 +64,38 @@ export default async function Product({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-          {product &&
-            product.map((product: any) => (
-              <div key={product._id} className="group relative">
-                <ProductCard product={product} />
-              </div>
-            ))}
+        <div>
+          {product && product.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+              {product.map((product: any) => (
+                <div key={product._id} className="group relative">
+                  <ProductCard
+                    product={product}
+                    isFavorite={product.favorite}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-gray-400 mb-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <p>No products found. Please check back later!</p>
+            </div>
+          )}
         </div>
+
         <div className="mt-12 mb-16 flex justify-center">
           <Pagination
             search={`/product?search=${search}`}

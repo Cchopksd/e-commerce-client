@@ -53,9 +53,22 @@ export async function loginWithGoogle() {
   try {
     const response = await fetch(`${HOST}/auth/google`, {
       method: "GET",
-    }).then((res) => res.json());
+      credentials: "include",
+    });
 
-    return redirect(response.url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Google login URL: ${response.status}`);
+    }
+
+    const { url } = await response.json();
+
+    // Redirect on the client side
+    if (typeof window !== "undefined") {
+      window.location.href = url;
+    } else {
+      // Handle server-side redirection
+      return redirect(url);
+    }
   } catch (error: any) {
     console.error("Error during login:", error);
     throw error;

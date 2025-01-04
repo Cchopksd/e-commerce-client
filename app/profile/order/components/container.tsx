@@ -6,7 +6,6 @@ import { Order, OrderStatus } from "./Order.interface";
 import {
   ShoppingCart,
   CreditCard,
-
   CheckCircle,
   XCircle,
   RefreshCw,
@@ -154,6 +153,8 @@ export default function OrderContainer({
       window.location.href = "order?status=successfully";
     }
   };
+
+  const openReviewModal = () => {};
 
   return (
     <section className="w-full h-full flex flex-col gap-4">
