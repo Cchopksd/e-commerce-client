@@ -37,11 +37,9 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
     const savedHistory = localStorage.getItem("searchHistory");
     if (savedHistory) {
       updatedHistory = JSON.parse(savedHistory);
-      if (!updatedHistory.includes(keywordsText)) {
+      if (!updatedHistory.includes(keywordsText) && keywordsText) {
         updatedHistory.push(keywordsText);
       }
-    } else {
-      updatedHistory = [keywordsText];
     }
 
     // Limit the history to the last 5 items
@@ -67,8 +65,7 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
     debounceTimeout.current = setTimeout(async () => {
-      console.log(keywordsText);
-      if (keywordsText === lastInputRef.current && keywordsText) {
+      if (keywordsText === lastInputRef.current) {
         const result = await searchSuggestions(keywordsText);
         if (result) {
           setSuggestions(result);

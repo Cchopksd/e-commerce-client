@@ -28,6 +28,12 @@ const Login = () => {
     setErrMessage({ email: "", password: "", result: "" });
     try {
       const response = await login({ email, password });
+      if (response.statusCode === 400) {
+        setErrMessage((prev) => ({
+          ...prev,
+          result: "Invalid email or password",
+        }));
+      }
       if (response.statusCode === 200) {
         window.location.href = "/";
       }

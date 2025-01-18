@@ -6,13 +6,13 @@ import IsCartEmpty from "./components/IsCartEmpty";
 export default async function pageCheckout() {
   const product = await fetchCartByID();
 
-  if (!product || product.cart.length === 0) {
-    return <IsCartEmpty />;
-  }
-
   return (
     <>
-      <ContentCheckout product={product} />
+      {product.cart.length === 0 ? (
+        <IsCartEmpty />
+      ) : (
+        <ContentCheckout product={product} />
+      )}
     </>
   );
 }

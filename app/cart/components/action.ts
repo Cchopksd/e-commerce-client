@@ -13,7 +13,6 @@ export const fetchCartByID = async () => {
     return [];
   }
 
-
   try {
     const resource = await fetch(`${hostname}/cart/user_id/${user_id}`, {
       method: "GET",
@@ -109,5 +108,24 @@ export const reduceFromCart = async (product_id: string, quantity: number) => {
     return result;
   } catch (error) {
     console.error("Error adding to cart:", error);
+  }
+};
+
+export const getCouple = async (couple_name: string) => {
+  const token = await getToken();
+  try {
+    const hostname = process.env.HOST_NAME;
+    const resource = await fetch(`${hostname}/couple?name=${couple_name}`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      return res.json();
+    });
+    return resource;
+  } catch (error) {
+    console.error("Error get couple:", error);
   }
 };

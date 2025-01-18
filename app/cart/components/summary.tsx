@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Info, MapPin, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
+import { getCouple } from "./action";
 export default function Summary({
   address,
   totalPrice,
@@ -14,6 +14,13 @@ export default function Summary({
   const router = useRouter();
 
   const [msgErr, setMsgErr] = useState("");
+  const [couple, setCouple] = useState("");
+  const [totalDiscount, setTotalDiscount] = useState<number>(0);
+  const [sumPrice, setSumPrice] = useState<number>(0);
+
+  useEffect(() => {
+    setSumPrice(totalPrice);
+  }, [totalPrice]);
 
   const handleClickCheckout = () => {
     if (address.length == 0) {
@@ -26,6 +33,23 @@ export default function Summary({
   };
 
   const handleAddAddress = () => {};
+
+  const handleAddCouple = async () => {
+    const result = await getCouple(couple);
+    if (result.statusCode == 404) {
+      return setMsgErr("ไม่พบคูปองนี้");
+    }
+
+    if (result.quantity !== 0) {
+      const discount =
+        totalPrice - (totalPrice / 100) * result.discount_percentage;
+      setTotalDiscount((totalPrice / 100) * result.discount_percentage);
+      setSumPrice(discount);
+      localStorage.setItem("couple", JSON.stringify(result));
+    } else {
+      return setMsgErr("คูปองหมดแล้ว");
+    }
+  };
 
   return (
     <div className="bg-white p-4 md:p-6 rounded-lg shadow-xl mt-6">
@@ -104,10 +128,16 @@ export default function Summary({
         <div className="flex gap-2">
           <input
             type="text"
+            value={couple}
+            onChange={(e) => {
+              setCouple(e.target.value);
+            }}
             className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-200"
             placeholder="Enter coupon code"
           />
-          <button className="px-4 py-2 bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors whitespace-nowrap">
+          <button
+            onClick={() => handleAddCouple()}
+            className="px-4 py-2 bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors whitespace-nowrap">
             Apply
           </button>
         </div>
@@ -124,7 +154,9 @@ export default function Summary({
           </div>
           <div className="flex justify-between items-center">
             <p className="text-gray-700">Discount</p>
-            <p className="font-semibold text-red-600">-฿0.00</p>
+            <p className="font-semibold text-red-600">
+              -฿{totalDiscount.toLocaleString()}
+            </p>
           </div>
           <div className="flex justify-between items-center">
             <p className="text-gray-700">Shipping Fee</p>
@@ -134,7 +166,7 @@ export default function Summary({
           <div className="flex justify-between items-center">
             <p className="font-semibold">Total</p>
             <p className="font-semibold text-lg">
-              ฿{totalPrice.toLocaleString()}
+              ฿{sumPrice.toLocaleString()}
             </p>
           </div>
         </div>

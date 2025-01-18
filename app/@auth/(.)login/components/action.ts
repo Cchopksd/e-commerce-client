@@ -13,27 +13,13 @@ export async function login({ email, password }: Form) {
     const response = await fetch(`${HOST}/auth/login`, {
       method: "POST",
       cache: "no-store",
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
-    });
+    }).then((res) => res.json());
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      const errorMessage = errorResponse?.message || "Unknown error";
-      console.error("Login failed:", errorMessage);
-
-      if (errorMessage === "Invalid credentials") {
-        throw new Error("The email or password you entered is incorrect.");
-      } else {
-        throw new Error(errorMessage);
-      }
-    }
-
-    const result = await response.json();
-    cookies().set("user-token", result.access_token, {
+    cookies().set("user-token", response.access_token, {
       httpOnly: true,
       sameSite: "lax",
       secure: false,
@@ -41,7 +27,7 @@ export async function login({ email, password }: Form) {
       path: "/",
     });
 
-    return result;
+    return response;
   } catch (error: any) {
     console.error("Error during login:", error);
     throw error;
@@ -53,7 +39,6 @@ export async function loginWithGoogle() {
   try {
     const response = await fetch(`${HOST}/auth/google`, {
       method: "GET",
-      credentials: "include",
     });
 
     if (!response.ok) {
@@ -66,7 +51,6 @@ export async function loginWithGoogle() {
     if (typeof window !== "undefined") {
       window.location.href = url;
     } else {
-      // Handle server-side redirection
       return redirect(url);
     }
   } catch (error: any) {

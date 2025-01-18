@@ -21,9 +21,10 @@ export default function Content({ product }: { product: any }) {
   const calculateTotal = () => {
     return cart.reduce(
       (total: number, item: any) =>
-        total +
-        (item.product_id.discount ?? item.product_id.price).toLocaleString() *
-          item.quantity,
+        (
+          total +
+          (item.product_id.discount ?? item.product_id.price) * item.quantity
+        ).toLocaleString(),
       0,
     );
   };
@@ -119,8 +120,9 @@ export default function Content({ product }: { product: any }) {
                   </td>
                   <td className="py-4 px-4 font-semibold text-blue-600 text-right">
                     {(
-                      item.product_id.discount ?? item.product_id.price
-                    ).toLocaleString() * item.quantity}{" "}
+                      (item.product_id.discount ?? item.product_id.price) *
+                      item.quantity
+                    ).toLocaleString()}{" "}
                     ฿
                   </td>
                 </tr>
@@ -132,16 +134,7 @@ export default function Content({ product }: { product: any }) {
           <div className="mt-4 px-4 flex justify-end text-lg font-semibold text-gray-800">
             <p>
               <span className="mr-2">ราคารวม:</span>
-              {cart.reduce(
-                (total: number, item: any) =>
-                  total +
-                  (
-                    item.product_id.discount ?? item.product_id.price
-                  ).toLocaleString() *
-                    item.quantity,
-                0,
-              )}{" "}
-              ฿
+              {calculateTotal()} ฿
             </p>
           </div>
         </section>

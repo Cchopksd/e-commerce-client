@@ -51,7 +51,8 @@ export default async function RootLayout({
   return (
     <ReduxProvider>
       <html lang="en">
-        <body className={`${roboto.className} antialiased`}>
+        <body
+          className={`${roboto.className} antialiased flex-1 h-full min-h-screen`}>
           <Navbar />
           {auth}
           {children}
