@@ -11,7 +11,7 @@ interface MenuItem {
   icon?: React.ReactNode;
 }
 
-export default function Sidebar({ userInfo }: any) {
+export default function Sidebar({ userInfo }: { userInfo: any }) {
   const pathname = usePathname();
 
   const menu: MenuItem[] = [

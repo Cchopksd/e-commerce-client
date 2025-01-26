@@ -28,7 +28,7 @@ export async function login({ email, password }: Form) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error during login:", error);
     throw error;
   }
@@ -53,7 +53,7 @@ export async function loginWithGoogle() {
     } else {
       return redirect(url);
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error during login:", error);
     throw error;
   }

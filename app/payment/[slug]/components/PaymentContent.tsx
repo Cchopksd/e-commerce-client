@@ -187,6 +187,7 @@ export default function PaymentContent({
                 height={0}
                 className="object-contain w-full h-full"
                 priority
+                unoptimized
               />
             </div>
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "./components/Sidebar";
 import { decryptToken, getToken } from "../utils/token";
 
-export default async function layout({
+export default async function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -1,17 +1,21 @@
 import React from "react";
-import ContentCheckout from "./components/content";
-import { fetchCartByID } from "../cart/components/action";
+import Container from "./components/Container";
+import { fetchCartByID } from "./components/action";
 import IsCartEmpty from "./components/IsCartEmpty";
 
-export default async function pageCheckout() {
+export default async function CheckoutPage() {
   const product = await fetchCartByID();
+
+  if (!product || !product.cart) {
+    return <div>Error loading checkout page. Please try again later.</div>;
+  }
 
   return (
     <>
-      {product.cart.length === 0 ? (
+      {!product || product.cart.length === 0 ? (
         <IsCartEmpty />
       ) : (
-        <ContentCheckout product={product} />
+        <Container product={product} />
       )}
     </>
   );

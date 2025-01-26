@@ -3,8 +3,14 @@ import React, { useState, useEffect } from "react";
 
 interface AddressSelectionProps {
   setStep: (step: "default" | "province") => void;
-  onAddressSelect: any;
-  addressData: any;
+  addressData: Address;
+  onAddressSelect: (address: Address) => void;
+}
+
+interface Address {
+  province: string;
+  district: string;
+  subdistrict: string;
 }
 
 interface Location {
@@ -15,7 +21,6 @@ interface Location {
 const AddressSelection: React.FC<AddressSelectionProps> = ({
   setStep,
   onAddressSelect,
-  addressData,
 }) => {
   const [provinces, setProvinces] = useState<Location[]>([]);
   const [districts, setDistricts] = useState<Location[]>([]);
@@ -50,7 +55,8 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
         );
         const districtData = await response.json();
         const filteredDistricts = districtData.filter(
-          (item: any) => item.province_id === Number(selectedProvince),
+          (item: { province_id: number }) =>
+            item.province_id === Number(selectedProvince),
         );
         setDistricts(filteredDistricts);
         setSelectedDistrict("");
@@ -73,7 +79,8 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
         );
         const subdistrictData = await response.json();
         const filteredSubdistricts = subdistrictData.filter(
-          (item: any) => item.amphure_id === Number(selectedDistrict),
+          (item: { amphure_id: number }) =>
+            item.amphure_id === Number(selectedDistrict),
         );
         setSubdistricts(filteredSubdistricts);
         setSelectedSubdistrict("");
@@ -86,14 +93,12 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
 
   const handleSubmit = () => {
     const provinceName =
-      provinces.find((p: any) => p.id === Number(selectedProvince))?.name_th ||
-      "";
+      provinces.find((p) => p.id === Number(selectedProvince))?.name_th || "";
     const districtName =
-      districts.find((d: any) => d.id === Number(selectedDistrict))?.name_th ||
-      "";
+      districts.find((d) => d.id === Number(selectedDistrict))?.name_th || "";
     const subdistrictName =
-      subdistricts.find((s: any) => s.id === Number(selectedSubdistrict))
-        ?.name_th || "";
+      subdistricts.find((s) => s.id === Number(selectedSubdistrict))?.name_th ||
+      "";
 
     onAddressSelect({
       province: provinceName,
@@ -120,7 +125,7 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             onChange={(e) => setSelectedProvince(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Select Province</option>
-            {provinces.map((province: any) => (
+            {provinces.map((province) => (
               <option key={province.id} value={province.id}>
                 {province.name_th}
               </option>
@@ -141,7 +146,7 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={!selectedProvince}>
             <option value="">Select District</option>
-            {districts.map((district: any) => (
+            {districts.map((district) => (
               <option key={district.id} value={district.id}>
                 {district.name_th}
               </option>
@@ -162,7 +167,7 @@ const AddressSelection: React.FC<AddressSelectionProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={!selectedDistrict}>
             <option value="">Select Subdistrict</option>
-            {subdistricts.map((subdistrict: any) => (
+            {subdistricts.map((subdistrict) => (
               <option key={subdistrict.id} value={subdistrict.id}>
                 {subdistrict.name_th}
               </option>

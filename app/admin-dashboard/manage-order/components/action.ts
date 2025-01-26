@@ -13,7 +13,7 @@ export const fetchAllOrders = async (order_status: string, page: number) => {
     return [];
   }
 
-  if (userInfo.role !== "admin") {
+  if (userInfo && userInfo?.role !== "admin") {
     console.error("Unauthorized access");
     return [];
   }

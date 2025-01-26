@@ -10,7 +10,6 @@ export const fetchCartByID = async () => {
 
   if (!user_id) {
     console.error("User ID not found in the token");
-    return [];
   }
 
   try {
@@ -25,20 +24,20 @@ export const fetchCartByID = async () => {
     if (!resource.ok) {
       const errorText = await resource.text();
       console.error(`Error fetching cart: ${resource.status} ${errorText}`);
-      return [];
+      return null;
     }
 
     const result = await resource.json();
 
     if (result.statusCode === 401) {
       console.warn("Unauthorized access, returning empty cart");
-      return [];
+      return null;
     }
 
     return result;
   } catch (error) {
     console.error("Error fetching cart:", error);
-    return [];
+    return null;
   }
 };
 

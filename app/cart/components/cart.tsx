@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 import Summary from "./summary";
-import { CartWithAddress } from "./interface";
+
 import { Minus, Plus } from "lucide-react";
 import { addToCart, reduceFromCart } from "./action";
 import Swal from "sweetalert2";
 import CartEmpty from "./CartEmpty";
+import { CartWithAddress } from "@/interface/Cart";
 
 export default function Cart({ cart }: { cart: CartWithAddress }) {
   const [cartItems, setCartItems] = useState(cart.cart);
@@ -107,7 +108,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                       <td className="p-4 text-left flex items-center gap-4">
                         <div className="w-20 h-20 flex-shrink-0">
                           <Image
-                            src={product.product_id.images[0].image_url || ""}
+                            src={product.product_id.images[0]}
                             alt={product.product_id.name}
                             className="w-full h-full object-cover rounded-md border"
                             width={100}
@@ -123,7 +124,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                       <td className="p-4 text-center text-gray-700">
                         ฿
                         {(
-                          product.product_id.discount ??
+                          product.product_id.discount ||
                           product.product_id.price
                         ).toLocaleString()}
                       </td>
@@ -163,7 +164,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                       <td className="p-4 text-center font-semibold text-[#fed28c]">
                         ฿
                         {(
-                          (product.product_id.discount ??
+                          (product.product_id.discount ||
                             product.product_id.price) * product.quantity
                         ).toLocaleString()}
                       </td>
@@ -185,7 +186,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                   className="bg-white rounded-xl shadow-md p-4 flex items-center space-x-4">
                   <div className="w-20 h-20 flex-shrink-0">
                     <Image
-                      src={product.product_id.images[0].image_url || ""}
+                      src={product.product_id.images[0]}
                       alt={product.product_id.name}
                       className="w-full h-full object-cover rounded-md border"
                       width={80}

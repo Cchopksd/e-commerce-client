@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useAppSelector } from "@/libs/hooks";
 
-import { Order, OrderStatus } from "./Order.interface";
+import { Order, OrderStatus } from "@/interface/Order";
 import {
   ShoppingCart,
   CreditCard,
@@ -15,7 +15,7 @@ import Image from "next/image";
 import { RootState } from "@/libs/store";
 import { getUserOrders, updateOrderReceived } from "./action";
 import { useSearchParams } from "next/navigation";
-import { addToCart } from "@/app/cart/components/action";
+import { addToCart } from "./action";
 
 const getStatusConfig = (status: OrderStatus) => {
   switch (status) {
@@ -69,15 +69,11 @@ export default function OrderContainer({
   orders,
   totalPage,
   currentPage,
-  userId,
-  token,
 }: {
   orders: Order[];
   totalOrders: number;
   totalPage: number;
   currentPage: number;
-  userId: string;
-  token: string;
 }) {
   const { ordersLists } = useAppSelector((state: RootState) => state.orders);
   const searchParams = useSearchParams();
@@ -94,10 +90,8 @@ export default function OrderContainer({
     try {
       setLoading(true);
       const response = await getUserOrders({
-        userId: userId,
         orderStatus: orderStatus,
         page: page + 1,
-        token,
       });
 
       setOrderList((prev) => [...prev, ...response.orders]);
@@ -154,8 +148,6 @@ export default function OrderContainer({
     }
   };
 
-  const openReviewModal = () => {};
-
   return (
     <section className="w-full h-full flex flex-col gap-4">
       {orderList.length > 0 ? (
@@ -187,7 +179,7 @@ export default function OrderContainer({
                         <div className="flex gap-6 items-center">
                           <div className="relative w-24 h-24 rounded-lg overflow-hidden">
                             <Image
-                              src={item.product_id.images[0].image_url}
+                              src={item.product_id.images[0]}
                               alt={item.product_id.name}
                               fill
                               className="object-cover group-hover:scale-105 transition-transform duration-200"

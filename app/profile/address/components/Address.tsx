@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { MapPin, Home, Building, Clock, Star, Edit, Trash } from "lucide-react";
-import AddAddressModal from "../add-new-address/page";
 
 interface AddressData {
   default: boolean;

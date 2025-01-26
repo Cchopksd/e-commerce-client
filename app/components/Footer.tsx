@@ -1,132 +1,107 @@
-"use client";
 import React from "react";
-import {
-  CreditCard,
-  QrCode,
-  Phone,
-  Mail,
-  Facebook,
-  Instagram,
-  Twitter,
-  MapPin,
-  Clock,
-} from "lucide-react";
-import { usePathname } from "next/navigation";
 
-const Footer = () => {
-  const pathname = usePathname();
-
-  if (pathname?.startsWith("/admin-dashboard")) {
-    return null;
-  }
-
+export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 bottom-0">
-      {/* Main Footer Content */}
-      <div className="max-w-[1440px] mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* About Section */}
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Column 1: About Us */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">About Us</h3>
-            <p className="text-sm leading-relaxed mb-4">
-              We are committed to providing the best shopping experience with
-              secure payment options and quality products.
+            <h3 className="text-lg font-semibold mb-4">About Us</h3>
+            <p className="text-gray-400">
+              We are a company dedicated to providing the best service in the
+              industry. Our mission is to make your life easier with our
+              innovative solutions.
             </p>
-            <div className="flex gap-4">
-              <Facebook className="w-5 h-5 cursor-pointer hover:text-blue-500 transition-colors" />
-              <Instagram className="w-5 h-5 cursor-pointer hover:text-pink-500 transition-colors" />
-              <Twitter className="w-5 h-5 cursor-pointer hover:text-blue-400 transition-colors" />
-            </div>
           </div>
 
-          {/* Payment Methods */}
+          {/* Column 2: Quick Links */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">
-              Payment Methods
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-blue-400" />
-                <div>
-                  <p className="font-medium">Credit/Debit Cards</p>
-                  <p className="text-sm text-gray-400">Visa, Mastercard, JCB</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <QrCode className="w-5 h-5 text-purple-400" />
-                <div>
-                  <p className="font-medium">PromptPay</p>
-                  <p className="text-sm text-gray-400">
-                    Scan QR to pay instantly
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div>
-            <h3 className="text-xl font-bold text-white mb-4">Contact Us</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5" />
-                <p>095 045 8714</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5" />
-                <p>kasidit.suwa@gmail.com</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5" />
-                <p>123 Sukhumvit Road, Bangkok 10110</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5" />
-                <p>Mon-Fri: 9:00 AM - 6:00 PM</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Shopping Guide
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <ul className="text-gray-400">
+              <li className="mb-2">
+                <a href="/" className="hover:text-white">
+                  Home
                 </a>
               </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Return Policy
+              <li className="mb-2">
+                <a href="/about" className="hover:text-white">
+                  About
                 </a>
               </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Terms & Conditions
+              <li className="mb-2">
+                <a href="/services" className="hover:text-white">
+                  Services
                 </a>
               </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  FAQs
+              <li className="mb-2">
+                <a href="/contact" className="hover:text-white">
+                  Contact
                 </a>
               </li>
             </ul>
           </div>
+
+          {/* Column 3: Newsletter */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
+            <p className="text-gray-400 mb-4">
+              Subscribe to our newsletter to get the latest updates and news.
+            </p>
+            <form className="flex">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="bg-gray-800 text-white rounded-l-lg p-2 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-r-lg p-2">
+                Subscribe
+              </button>
+            </form>
+          </div>
+
+          {/* Column 4: Contact Info */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
+            <ul className="text-gray-400">
+              <li className="mb-2">123 Main Street, City, Country</li>
+              <li className="mb-2">Email: info@example.com</li>
+              <li className="mb-2">Phone: +123 456 7890</li>
+            </ul>
+          </div>
         </div>
 
-        {/* Copyright */}
-        <div className="mt-8 text-center text-sm text-gray-400">
-          <p>© 2024 Kiramiz. All rights reserved.</p>
+        {/* Bottom Section: Copyright and Social Media */}
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <p className="text-gray-400">
+            &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+          </p>
+          <div className="flex justify-center mt-4 space-x-4">
+            <a
+              href="https://facebook.com"
+              className="text-gray-400 hover:text-white">
+              <i className="fab fa-facebook"></i>
+            </a>
+            <a
+              href="https://twitter.com"
+              className="text-gray-400 hover:text-white">
+              <i className="fab fa-twitter"></i>
+            </a>
+            <a
+              href="https://instagram.com"
+              className="text-gray-400 hover:text-white">
+              <i className="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://linkedin.com"
+              className="text-gray-400 hover:text-white">
+              <i className="fab fa-linkedin"></i>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

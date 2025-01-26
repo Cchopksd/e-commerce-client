@@ -5,8 +5,15 @@ import UserMenu from "../UserMenu";
 import Link from "next/link";
 import { BiCart, BiSearch } from "react-icons/bi";
 import { searchSuggestions } from "../action";
+import Cart from "./Cart";
 
-export default function Navbar({ userInfo }: { userInfo: any | null }) {
+export default function Navbar({
+  userInfo,
+  getCartItem,
+}: {
+  userInfo: any | null;
+  getCartItem: number;
+}) {
   const pathname = usePathname();
   const [keywords, setKeywords] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -165,9 +172,7 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                   )}
               </div>
 
-              <a href="/cart" className="hover:text-gray-600 transition-colors">
-                <BiCart size={24} />
-              </a>
+              <Cart getCartItem={getCartItem} />
               {userInfo ? (
                 <UserMenu userInfo={userInfo} />
               ) : (
@@ -187,9 +192,7 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                 aria-label="Toggle search">
                 <BiSearch size={24} />
               </button>
-              <a href="/cart" className="hover:text-gray-600 transition-colors">
-                <BiCart size={24} />
-              </a>
+              <Cart getCartItem={getCartItem} />
               {userInfo ? (
                 <UserMenu userInfo={userInfo} />
               ) : (

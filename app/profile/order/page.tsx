@@ -1,27 +1,21 @@
-import { decryptToken, getToken } from "@/app/utils/token";
 import React from "react";
+
 import { getUserOrders } from "./components/action";
 import Container from "./components/container";
-import { OrderStatus } from "./components/Order.interface";
+
+import { OrderStatus } from "@/interface/Order";
+import { OrderStatusBar } from "./components/orderStatus";
 
 export default async function page({
   searchParams,
 }: {
   searchParams: { status: string };
 }) {
-  const token = await getToken();
-  const userInfo = await decryptToken(token);
-  if (!token || !userInfo) {
-    return <div>No user info</div>;
-  }
-
   const orderStatus = searchParams.status || OrderStatus.All;
 
   const orders = await getUserOrders({
-    userId: userInfo.sub,
     orderStatus: orderStatus,
     page: 1,
-    token,
   });
 
   const orderList = orders.orders;
@@ -30,15 +24,18 @@ export default async function page({
   const currentPage = orders.page_now;
 
   return (
-    <div className="flex flex-col gap-4">
-      <Container
-        userId={userInfo.sub}
-        token={token}
-        orders={orderList}
-        totalOrders={totalOrders}
-        totalPage={totalPage}
-        currentPage={currentPage}
-      />
+    <div className="w-full h-full space-y-4">
+      <OrderStatusBar />
+      <section className="w-full">
+        <div className="flex flex-col gap-4">
+          <Container
+            orders={orderList}
+            totalOrders={totalOrders}
+            totalPage={totalPage}
+            currentPage={currentPage}
+          />
+        </div>
+      </section>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { fetchProductByID } from "./components/action";
 import ProductContent from "./components/ProductContent";
 import { decryptToken, getToken } from "@/app/utils/token";
 import Review, { Review as ReviewType } from "./components/Review";
-import { Product } from "@/app/cart/components/interface";
+import { Product } from "@/interface/Product";
 import { LuPackageX } from "react-icons/lu";
 
 interface ProductResult {

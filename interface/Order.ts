@@ -1,3 +1,5 @@
+import { Product } from "./Product";
+
 export interface OrderResponse {
   total_items: number;
   total_pages: number;
@@ -27,25 +29,6 @@ export interface ShippingAddress {
   detail: string;
   default: boolean;
   createdAt: string;
-  updatedAt: string;
-}
-
-interface ProductImage {
-  image_url: string;
-  public_id: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  images: ProductImage[];
-  price: number;
-  discount: number;
-  category: string;
-  detail: string;
-  amount: number;
-  sale_out: number;
-  __v: number;
   updatedAt: string;
 }
 

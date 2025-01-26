@@ -3,23 +3,8 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { CircleDollarSign, Package, Heart } from "lucide-react";
 import { favoriteProduct } from "../[slug]/components/action";
-
-interface ImagesProduct {
-  image_url: string;
-  public_id: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  images: ImagesProduct[];
-  price: number;
-  discount: number;
-  category: string;
-  detail: string;
-  amount: number;
-  sale_out: number;
-}
+import { Product } from "@/interface/Product";
+import Link from "next/link";
 
 interface ProductCardProps {
   product: Product;
@@ -35,16 +20,16 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
   const [favorite, setFavorite] = useState<boolean>(isFavorite);
 
   const stockStatus =
-    product.sale_out === 0
+    product.amount === 0
       ? "สินค้าหมด"
-      : product.sale_out < 10
-      ? `เหลือเพียง ${product.sale_out} ชิ้น`
-      : `มีสินค้า ${product.sale_out} ชิ้น`;
+      : product.amount < 10
+      ? `เหลือเพียง ${product.amount} ชิ้น`
+      : `มีสินค้า ${product.amount} ชิ้น`;
 
   const stockBadgeColor =
-    product.sale_out === 0
+    product.amount === 0
       ? "bg-red-500"
-      : product.sale_out < 10
+      : product.amount < 10
       ? "bg-yellow-500"
       : "bg-green-500";
 
@@ -61,18 +46,22 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
   };
 
   return (
-    <a
+    <Link
+      rel="preload"
       href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
       className={`group relative flex w-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm 
       transition-all duration-300 h-[300px] md:h-[420px]`}>
       {/* Image Container */}
       <div className="relative h-[180px] md:h-[260px] w-full overflow-hidden">
         <Image
-          src={product.images[0]?.image_url || "/placeholder-image.jpg"}
+          src={
+            Array.isArray(product.images) && product.images.length > 0
+              ? product.images[0]
+              : "https://file.kiramiz.com/detailed.png"
+          }
           alt={product.name}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-          priority
           className="object-cover transition-transform duration-300"
         />
 
@@ -96,21 +85,21 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
       {/* Product Details */}
       <div className="flex flex-1 flex-col p-4">
         {/* Product Name */}
-        <div className="w-full flex justify-between">
-          <h4 className="mb-2 line-clamp-2 text-base font-semibold text-gray-800">
-            <p className="transition-colors hover:text-red-500">
-              {product.name}
-            </p>
+        <div className="w-full flex items-center gap-2">
+          {/* Product Name */}
+          <h4 className="flex-1 line-clamp-2 text-base font-semibold text-gray-800 hover:text-red-500 transition-colors">
+            {product.name}
           </h4>
-          {/* Floating Favorite Button */}
+
+          {/* Favorite Button */}
           <button
             onClick={handleFavoriteClick}
-            className="rounded-full bg-white/90 p-3 shadow-md transition-all hover:bg-white hover:shadow-lg"
+            className="rounded-full bg-white/90 p-2 shadow-md hover:bg-white hover:shadow-lg transition-all"
             aria-label={
               isFavorite ? "Remove from favorites" : "Add to favorites"
             }>
             <Heart
-              className={`h-5 w-5 ${
+              className={`h-4 md:h-5 w-4 md:w-5 ${
                 favorite
                   ? "fill-red-500 text-red-500"
                   : "fill-none text-gray-600"
@@ -149,6 +138,6 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }

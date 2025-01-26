@@ -6,7 +6,7 @@ import {
   updateOrderStatusValue,
 } from "@/libs/features/admin/manageOrderSlice";
 import { updateOrderStatus } from "./action";
-import { OrderStatus } from "@/app/profile/order/components/Order.interface";
+import { OrderStatus } from "@/interface/Order";
 import { ShippingProvider } from "../enum/shippingProvider";
 
 export default function Shipping({

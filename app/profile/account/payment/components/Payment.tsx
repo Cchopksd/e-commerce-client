@@ -1,6 +1,7 @@
 import React from "react";
 import { CardType } from "../enum/cardType";
 import { getCard } from "./action";
+import Image from "next/image";
 
 export default async function Payment() {
   const cardInfo = await getCard();
@@ -17,7 +18,9 @@ export default async function Payment() {
           <div key={idx} className="border rounded-lg p-4  transition">
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="w-full md:w-32 h-32 flex items-center justify-center bg-gray-50 rounded-md">
-                <img
+                <Image
+                  width={0}
+                  height={0}
                   src={getBrandImage(card.brand)}
                   alt={card.brand}
                   className="h-16"

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { OrderStatus } from "./Order.interface";
+import { OrderStatus } from "@/interface/Order";
 
 export const OrderStatusBar = () => {
   const searchParams = useSearchParams();
@@ -11,7 +11,6 @@ export const OrderStatusBar = () => {
   const [activeStatus, setActiveStatus] = useState(orderStatus);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isDropdownOpen) {

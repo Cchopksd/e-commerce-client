@@ -1,6 +1,6 @@
 "use client";
 
-import { Order } from "@/app/profile/order/components/Order.interface";
+import { Order } from "@/interface/Order";
 import { formatDate } from "@/app/utils/formatDate";
 import { useAppSelector } from "@/libs/hooks";
 import React, { useEffect, useState } from "react";

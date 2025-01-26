@@ -1,4 +1,4 @@
-import { Order } from "@/app/profile/order/components/Order.interface";
+import { Order } from "@/interface/Order";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ManageOrderState {

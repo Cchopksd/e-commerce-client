@@ -28,7 +28,9 @@ const AddAddressModal = () => {
     }));
   };
 
-  const handleAddressSelect = (address: any) => {
+
+
+  const handleAddressSelect = (address:any) => {
     setAddressData((prev) => ({
       ...prev,
       ...address,

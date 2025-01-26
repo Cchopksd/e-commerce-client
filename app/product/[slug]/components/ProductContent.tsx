@@ -11,31 +11,19 @@ import {
 import { addToCart, favoriteProduct } from "./action";
 import { decrement, increment } from "@/libs/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/libs/hooks";
-
-interface ProductImage {
-  image_url: string;
-  public_id: string;
-}
+import { Product } from "@/interface/Product";
 
 interface ProductData {
-  _id: string;
-  name: string;
-  category: string;
-  detail: string;
-  price: number;
-  discount: number;
-  amount: number;
-  sale_out: number;
-  images: ProductImage[];
-}
-
-interface Product {
-  product: ProductData;
+  product: Product;
   token: string | null;
   favorite: boolean;
 }
 
-export default function ProductContent({ product, token, favorite }: Product) {
+export default function ProductContent({
+  product,
+  token,
+  favorite,
+}: ProductData) {
   const dispatch = useAppDispatch();
 
   const { value } = useAppSelector((state) => state.cart);
@@ -54,7 +42,7 @@ export default function ProductContent({ product, token, favorite }: Product) {
   };
 
   product.images.map((items) => {
-    images.push(items.image_url);
+    images.push(items);
   });
 
   const discountPercentage = Math.round(

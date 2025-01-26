@@ -1,4 +1,4 @@
-import { Product } from "@/app/cart/components/interface";
+import { Product } from "@/interface/Product";
 
 export interface Favorite {
   _id: string;

@@ -19,16 +19,42 @@ export const fetchTrendingProduct = async () => {
     );
     const result = await resource.json();
     if (!resource.ok) {
-      console.error("Response Error:", {
-        status: resource.status,
-        statusText: resource.statusText,
-        error: result,
-      });
-      return null;
+      throw new Error("Failed to fetch trending products");
     }
     return result;
   } catch (error) {
     console.error("Error fetching trending product:", error);
+    return null;
+  }
+};
+
+export const fetchCartNumber = async () => {
+  const hostname = process.env.HOST_NAME;
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
+
+  const user_id = userInfo ? userInfo?.sub : "";
+
+  try {
+    const resource = await fetch(
+      `${hostname}/cart/count-item?user_id=${user_id}`,
+      {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (!resource.ok) {
+      console.log(resource);
+    }
+
+    const result = await resource.json();
+    return result.count;
+  } catch (error) {
+    console.error("Error fetching cart:", error);
     return null;
   }
 };

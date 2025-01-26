@@ -1,18 +1,17 @@
 "use server";
 import { decryptToken, getToken } from "@/app/utils/token";
 
-export interface PreparePromptPayData {
-  type: "promptpay";
-  currency: string;
-  address: string;
-}
 const hostname = process.env.HOST_NAME;
 
 export const payWithPromptPay = async ({
   type,
   address,
   currency,
-}: PreparePromptPayData): Promise<any> => {
+}: {
+  type: "promptpay";
+  currency: string;
+  address: string;
+}): Promise<any> => {
   const token = await getToken();
   if (!token || !hostname) {
     console.error("Missing token or hostname");
@@ -55,5 +54,44 @@ export const payWithPromptPay = async ({
   } catch (error) {
     console.error("Error during payment processing:", error);
     return null;
+  }
+};
+
+export const fetchCartByID = async () => {
+  const token = await getToken();
+
+  const userInfo = await decryptToken(token || "");
+  const user_id = userInfo?.sub;
+
+  if (!user_id) {
+    console.error("User ID not found in the token");
+  }
+
+  try {
+    const resource = await fetch(`${hostname}/cart/user_id/${user_id}`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!resource.ok) {
+      const errorText = await resource.text();
+      console.error(`Error fetching cart: ${resource.status} ${errorText}`);
+      return [];
+    }
+
+    const result = await resource.json();
+
+    if (result.statusCode === 401) {
+      console.warn("Unauthorized access, returning empty cart");
+      return [];
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    return [];
   }
 };

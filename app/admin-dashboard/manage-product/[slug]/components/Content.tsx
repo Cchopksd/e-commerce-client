@@ -6,6 +6,18 @@ import { Plus } from "lucide-react";
 import { updateProduct } from "./action";
 import { DraggableImage } from "./ImageUploadzone";
 
+const fetchImage = async (imageURL: string) => {
+  const imageName = imageURL.split("/").pop();
+  const response = await fetch(imageURL);
+  const blob = await response.blob();
+
+  const file = new File([blob], `${imageName}`, {
+    type: blob.type,
+  });
+
+  return file;
+};
+
 interface ProductType {
   _id: string;
   name: string;
@@ -35,22 +47,22 @@ const ProductManagementPage = ({
       try {
         const files = await Promise.all(
           product.images.map(async (photo) => {
-            if (photo.image_url instanceof File) return photo.image_url;
+            if (photo instanceof File) return photo;
 
-            const response = await fetch(photo.image_url);
-            const blob = await response.blob();
-            return new File([blob], `product-image`, { type: blob.type });
+            const imageFileConvert = fetchImage(photo.toString());
+            return imageFileConvert;
           }),
         );
 
         setPhotosFiles(files);
       } catch (error) {
-        console.error("Failed to initialize image files", error);
+        console.error("Error initializing files:", error);
       }
     };
 
     initializeFiles();
-  }, [product.images]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -64,13 +76,13 @@ const ProductManagementPage = ({
       setPhotosFiles(limitedFiles);
 
       // Update product images, preserving existing URLs and adding new files
-      // setProduct((prev) => ({
-      //   ...prev,
-      //   images: [
-      //     ...prev.images.filter((img) => typeof img.image_url === "string"),
-      //     ...limitedFiles.map((file) => ({ image_url: file })),
-      //   ],
-      // }));
+      setProduct((prev) => ({
+        ...prev,
+        images: [
+          ...prev.images.filter((img) => typeof img.image_url === "string"),
+          ...limitedFiles.map((file) => ({ image_url: file })),
+        ],
+      }));
     }
   };
 
@@ -126,6 +138,8 @@ const ProductManagementPage = ({
       formData.append("sale_out", product.sale_out.toString());
 
       photosFiles.forEach((file) => {
+        console.log(file);
+
         formData.append("images", file);
       });
 
@@ -207,7 +221,7 @@ const ProductManagementPage = ({
                 <label
                   htmlFor="discount"
                   className="block text-gray-700 font-bold mb-2">
-                  Discount (%)
+                  Discount
                 </label>
                 <input
                   type="number"
@@ -311,7 +325,6 @@ const ProductManagementPage = ({
             {/* Submit Button */}
             <div className="pt-4">
               <button
-                type="submit"
                 disabled={isSubmitting}
                 onClick={handleSubmit}
                 className={`w-full py-3 rounded-lg transition-colors flex items-center justify-center

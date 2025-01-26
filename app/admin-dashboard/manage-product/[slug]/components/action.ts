@@ -33,7 +33,7 @@ export const updateProduct = async (id: string, formData: FormData) => {
     const response = await fetch(
       `${process.env.HOST_NAME}/product/update/${id}`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
         },

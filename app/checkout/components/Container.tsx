@@ -16,7 +16,7 @@ const paymentMethods = [
 
 export default function Content({ product }: { product: any }) {
   const { address, cart } = product;
-  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<string>("");
 
   const calculateTotal = () => {
     return cart.reduce(

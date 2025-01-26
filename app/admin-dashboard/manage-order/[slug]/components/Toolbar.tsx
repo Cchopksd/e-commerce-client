@@ -31,7 +31,7 @@ export enum OrderStatus {
 }
 
 interface ToolbarProps {
-  orderStatus: OrderStatus;
+  orderStatus: string;
   orderId: string;
 }
 
@@ -93,7 +93,7 @@ const ActionButton = ({
 };
 
 interface StatusActionsProps {
-  status: OrderStatus;
+  status: string;
   onUpdateStatus: (status: OrderStatus) => void;
   isLoading?: boolean;
 }
@@ -201,7 +201,7 @@ interface MobileViewProps {
   onSendEmail: () => void;
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  status: OrderStatus;
+  status: string;
   onUpdateStatus: (status: OrderStatus) => void;
   isLoading?: boolean;
 }

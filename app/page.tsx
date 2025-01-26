@@ -1,13 +1,14 @@
-import { fetchTrendingProduct } from "./components/action";
+import React from "react";
+import Banner from "./components/Banner";
+import Trending from "./components/treading/Treading";
 
-import Home from "./components/home/Home";
-
-export default async function Page() {
-  const trendingProduct = await fetchTrendingProduct();
-
+export default function page() {
   return (
-    <main className="h-full">
-      <Home trendingProduct={trendingProduct} />
+    <main className="flex flex-col w-full items-center">
+      <section className="w-[90%] max-w-[1440px] py-10 flex justify-center items-center">
+        <Banner />
+      </section>
+      <Trending />
     </main>
   );
 }
