@@ -18,20 +18,16 @@ export default function Content({ product }: { product: any }) {
   const { address, cart } = product;
   const [selectedPayment, setSelectedPayment] = useState<string>("");
 
-  const calculateTotal = () => {
-    return cart.reduce(
-      (total: number, item: any) =>
-        (
-          total +
-          (item.product_id.discount ?? item.product_id.price) * item.quantity
-        ).toLocaleString(),
-      0,
-    );
-  };
+  const calculateTotal = cart.reduce(
+    (total: number, item: any) =>
+      total +
+      (item.product_id.discount || item.product_id.price) * item.quantity,
+    0
+  );
 
   const checkoutItem = async () => {
     if (selectedPayment === "PromptPay") {
-      if (calculateTotal() < 20) {
+      if (calculateTotal < 20) {
         return alert("amount must be greater than or equal to ฿20");
       }
       try {
@@ -111,7 +107,7 @@ export default function Content({ product }: { product: any }) {
                   </td>
                   <td className="py-4 px-4 text-gray-600 text-right">
                     {(
-                      item.product_id.discount ?? item.product_id.price
+                      item.product_id.discount || item.product_id.price
                     ).toLocaleString()}{" "}
                     ฿
                   </td>
@@ -120,7 +116,7 @@ export default function Content({ product }: { product: any }) {
                   </td>
                   <td className="py-4 px-4 font-semibold text-blue-600 text-right">
                     {(
-                      (item.product_id.discount ?? item.product_id.price) *
+                      (item.product_id.discount || item.product_id.price) *
                       item.quantity
                     ).toLocaleString()}{" "}
                     ฿
@@ -134,7 +130,7 @@ export default function Content({ product }: { product: any }) {
           <div className="mt-4 px-4 flex justify-end text-lg font-semibold text-gray-800">
             <p>
               <span className="mr-2">ราคารวม:</span>
-              {calculateTotal()} ฿
+              {calculateTotal.toLocaleString()} ฿
             </p>
           </div>
         </section>
@@ -157,7 +153,8 @@ export default function Content({ product }: { product: any }) {
             selectedPayment === method.id
               ? "border-blue-600 bg-blue-50 text-blue-700"
               : "border-gray-200 hover:border-blue-300"
-          }`}>
+          }`}
+              >
                 <Image
                   src={method.image}
                   alt={method.name}
@@ -176,7 +173,7 @@ export default function Content({ product }: { product: any }) {
           <div className="flex justify-between mb-4">
             <span className="text-gray-700">ยอดรวม</span>
             <span className="font-semibold text-gray-900">
-              {calculateTotal()} ฿
+              {calculateTotal.toLocaleString()} ฿
             </span>
           </div>
           <button
@@ -188,7 +185,8 @@ export default function Content({ product }: { product: any }) {
               bg-blue-600 text-white font-semibold
               hover:bg-blue-700 transition-colors
               disabled:bg-gray-400 disabled:cursor-not-allowed
-            ">
+            "
+          >
             ชำระเงิน
             <ChevronRight className="ml-2" />
           </button>

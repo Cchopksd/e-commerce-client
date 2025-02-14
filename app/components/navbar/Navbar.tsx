@@ -1,13 +1,23 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, use } from "react";
 import UserMenu from "../UserMenu";
-import Link from "next/link";
 import { BiCart, BiSearch } from "react-icons/bi";
 import { searchSuggestions } from "../action";
+import Login from "../login/Login";
 
-export default function Navbar({ userInfo }: { userInfo: any | null }) {
+import { useDispatch, useSelector } from "react-redux";
+import { numberOfItems } from "@/libs/features/cart/cartSlice";
+
+export default function Navbar({
+  userInfo,
+  countItem,
+}: {
+  userInfo: any | null;
+  countItem: number | null;
+}) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
   const [keywords, setKeywords] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [focusSearchSuggestions, setFocusSearchSuggestions] = useState(false);
@@ -17,17 +27,20 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
+  const { itemsInCart } = useSelector((state: any) => state.cart);
+
   useEffect(() => {
     const history = localStorage.getItem("searchHistory");
     if (history) {
       setSearchHistory(JSON.parse(history));
     }
+    dispatch(numberOfItems(countItem));
   }, []);
 
   const filterSearchHistory = (history: string[], query: string) => {
     if (!query) return history;
     return history.filter((item) =>
-      item.toLowerCase().includes(query.toLowerCase()),
+      item.toLowerCase().includes(query.toLowerCase())
     );
   };
 
@@ -85,12 +98,13 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
           <div className="h-20 flex items-center justify-between">
             {/* Logo */}
             <div className="flex justify-center">
-              <Link
+              <a
                 href="/"
                 className="text-xl md:text-2xl font-bold tracking-wider"
-                aria-label="Homepage">
+                aria-label="Homepage"
+              >
                 KIRAMIZ
-              </Link>
+              </a>
             </div>
 
             {/* Desktop Navigation */}
@@ -115,21 +129,24 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                 <button
                   onClick={() => handleSearch(keywords)}
                   className="absolute right-3 top-2.5 cursor-pointer text-gray-400 hover:text-gray-600"
-                  aria-label="Search">
+                  aria-label="Search"
+                >
                   <BiSearch size={20} />
                 </button>
                 {focusSearchSuggestions &&
                   (searchHistory.length > 0 || suggestions.length > 0) && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                    >
                       <ul className="py-1">
                         {suggestions.length > 0 ? (
                           suggestions.map((suggestion, index) => (
                             <li
                               key={index}
                               onClick={() => handleSearch(suggestion.name)}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700">
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                            >
                               {suggestion.name}
                             </li>
                           ))
@@ -145,17 +162,19 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                                 onSelect={handleSearch}
                                 onDelete={handleDeleteHistory}
                               />
-                            ),
+                            )
                           )
                         ) : (
                           <li
                             onKeyDown={(e) => {
                               if (e.key === "Enter") handleSearch(keywords);
                             }}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex justify-between items-center group">
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex justify-between items-center group"
+                          >
                             <a
                               href={`/product?search=${keywords}&page=1&limit=10`}
-                              className="truncate flex-1">
+                              className="truncate flex-1"
+                            >
                               ค้นหาด้วย &apos;{keywords}&apos;
                             </a>
                           </li>
@@ -165,18 +184,32 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                   )}
               </div>
 
-              <a href="/cart" className="hover:text-gray-600 transition-colors">
-                <BiCart size={24} />
+              <a
+                href="/cart"
+                className="hover:text-gray-600 transition-colors relative"
+              >
+                <BiCart size={32} />
+                {itemsInCart ? (
+                  itemsInCart > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1 rounded-full">
+                      {itemsInCart}
+                    </span>
+                  )
+                ) : (
+                  <>
+                    {countItem ? (
+                      countItem > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1 rounded-full">
+                          {countItem}
+                        </span>
+                      )
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
               </a>
-              {userInfo ? (
-                <UserMenu userInfo={userInfo} />
-              ) : (
-                <Link
-                  href="/login"
-                  className="block px-4 py-2 text-center rounded-full bg-black text-white hover:bg-gray-800 transition-colors">
-                  Login
-                </Link>
-              )}
+              {userInfo ? <UserMenu userInfo={userInfo} /> : <Login />}
             </div>
 
             {/* Mobile Icons */}
@@ -184,21 +217,33 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
               <button
                 onClick={toggleSearch}
                 className="hover:text-gray-600 transition-colors"
-                aria-label="Toggle search">
+                aria-label="Toggle search"
+              >
                 <BiSearch size={24} />
               </button>
               <a href="/cart" className="hover:text-gray-600 transition-colors">
                 <BiCart size={24} />
+                {itemsInCart ? (
+                  itemsInCart > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1 rounded-full">
+                      {itemsInCart}
+                    </span>
+                  )
+                ) : (
+                  <>
+                    {countItem ? (
+                      countItem > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold px-1 rounded-full">
+                          {countItem}
+                        </span>
+                      )
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
               </a>
-              {userInfo ? (
-                <UserMenu userInfo={userInfo} />
-              ) : (
-                <Link
-                  href="/login"
-                  className="block px-4 py-2 text-center rounded-full bg-black text-white hover:bg-gray-800 transition-colors">
-                  Login
-                </Link>
-              )}
+              {userInfo ? <UserMenu userInfo={userInfo} /> : <Login />}
             </div>
           </div>
 
@@ -224,14 +269,16 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                   {focusSearchSuggestions && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                    >
                       <ul className="py-1">
                         {suggestions.length > 0 ? (
                           suggestions.map((suggestion, index) => (
                             <li
                               key={index}
                               onClick={() => handleSearch(suggestion.name)}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700">
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                            >
                               {suggestion.name}
                             </li>
                           ))
@@ -247,17 +294,19 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                                 onSelect={handleSearch}
                                 onDelete={handleDeleteHistory}
                               />
-                            ),
+                            )
                           )
                         ) : (
                           <li
                             onKeyDown={(e) => {
                               if (e.key === "Enter") handleSearch(keywords);
                             }}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex justify-between items-center group">
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex justify-between items-center group"
+                          >
                             <a
                               href={`/product?search=${keywords}&page=1&limit=10`}
-                              className="truncate flex-1">
+                              className="truncate flex-1"
+                            >
                               ค้นหาด้วย &apos;{keywords}&apos;
                             </a>
                           </li>
@@ -268,7 +317,8 @@ export default function Navbar({ userInfo }: { userInfo: any | null }) {
                   <button
                     onClick={() => handleSearch(keywords)}
                     className="absolute right-3 top-2.5 cursor-pointer text-gray-400 hover:text-gray-600"
-                    aria-label="Search">
+                    aria-label="Search"
+                  >
                     <BiSearch size={20} />
                   </button>
                 </div>
@@ -304,11 +354,13 @@ const SearchHistoryItem = ({
       onKeyDown={(e) => {
         if (e.key === "Enter") onSelect(text);
         if (e.key === "Delete") onDelete(index);
-      }}>
+      }}
+    >
       <a
         href={`/product?search=${text}&page=1&limit=10`}
         className="truncate flex-1"
-        title={text}>
+        title={text}
+      >
         {text}
       </a>
       {/* <button

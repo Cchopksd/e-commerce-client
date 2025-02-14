@@ -14,7 +14,6 @@ export default function Content({ favorites }: { favorites: Favorite[] }) {
         <div className="text-center text-gray-500">ยังไม่มีรายการโปรด</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* //{ product, isFavorite } */}
           {favorites &&
             favorites.map((item, idx) => (
               <ProductCard

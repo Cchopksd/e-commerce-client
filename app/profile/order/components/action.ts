@@ -11,6 +11,7 @@ export async function getUserOrders({
 }) {
   const token = await getToken();
   const userInfo: any = await decryptToken(token);
+
   try {
     const response = await fetch(`${process.env.HOST_NAME}/order/order-user`, {
       method: "POST",
@@ -19,7 +20,7 @@ export async function getUserOrders({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        user_id: userInfo?.userId,
+        user_id: userInfo?.sub,
         order_status: orderStatus,
         page,
       }),
@@ -46,7 +47,7 @@ export async function updateOrderReceived(order_id: string) {
         body: JSON.stringify({
           order_id: order_id,
         }),
-      },
+      }
     );
     const result = await response.json();
     return result;

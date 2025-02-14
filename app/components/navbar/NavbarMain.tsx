@@ -16,7 +16,7 @@ export default async function NavbarMain() {
 
   return (
     <div>
-      <Navbar userInfo={userInfo} getCartItem={getCartItem} />
+      <Navbar userInfo={userInfo} countItem={getCartItem} />
     </div>
   );
 }

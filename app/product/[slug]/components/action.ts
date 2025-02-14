@@ -36,7 +36,7 @@ export const fetchProductByID = async ({
 export const addToCart = async (
   token: string | null,
   product_id: string,
-  quantity: number,
+  quantity: number
 ) => {
   const hostname = process.env.HOST_NAME;
   const userInfo = await decryptToken(token || "");
@@ -99,5 +99,34 @@ export const favoriteProduct = async ({
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const fetchFamiliarProduct = async ({
+  product_id,
+}: {
+  product_id: string;
+}) => {
+  const hostname = process.env.HOST_NAME;
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
+  const user_id = userInfo ? userInfo?.sub : "";
+
+  try {
+    const resource = await fetch(
+      `${hostname}/product/familiar-product?user_id=${user_id}&product_id=${product_id}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+    const result = await resource.json();
+    if (!resource.ok) {
+      throw new Error("Failed to fetch familiar products");
+    }
+    return result.detail;
+  } catch (error) {
+    console.error("Error fetching familiar product:", error);
+    return null;
   }
 };

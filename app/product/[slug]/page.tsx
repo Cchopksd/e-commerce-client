@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchProductByID } from "./components/action";
+import { fetchFamiliarProduct, fetchProductByID } from "./components/action";
 import ProductContent from "./components/ProductContent";
 import { decryptToken, getToken } from "@/app/utils/token";
 import Review, { Review as ReviewType } from "./components/Review";
@@ -18,10 +18,19 @@ export default async function page({ params }: { params: { slug: string } }) {
   const userInfo = await decryptToken(token);
   const product_slug = slug.split("-").pop();
 
-  const productResult: ProductResult = await fetchProductByID({
+  const productResultData = fetchProductByID({
     product_id: product_slug || "",
     user_id: (userInfo?.sub as string) || "",
   });
+
+  const familiarProductData = fetchFamiliarProduct({
+    product_id: product_slug || "",
+  });
+
+  const [productResult, familiarProduct] = await Promise.all([
+    productResultData,
+    familiarProductData,
+  ]);
 
   return (
     <main className="w-full flex flex-col gap-10">
@@ -36,7 +45,10 @@ export default async function page({ params }: { params: { slug: string } }) {
           </section>
           <hr className="w-full max-w-[1440px] m-auto px-4" />
           <section className="w-full max-w-[1440px] m-auto">
-            <Review reviews={productResult.reviews} />
+            <Review
+              reviews={productResult.reviews}
+              familiarProduct={familiarProduct}
+            />
           </section>
         </>
       ) : (

@@ -14,7 +14,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, isFavorite }: ProductCardProps) {
   const discountPercentage = Math.round(
-    ((product.price - product.discount) / product.price) * 100,
+    ((product.price - product.discount) / product.price) * 100
   );
 
   const [favorite, setFavorite] = useState<boolean>(isFavorite);
@@ -23,18 +23,18 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
     product.amount === 0
       ? "สินค้าหมด"
       : product.amount < 10
-      ? `เหลือเพียง ${product.amount} ชิ้น`
-      : `มีสินค้า ${product.amount} ชิ้น`;
+      ? `เหลือเพียง ${product.amount.toLocaleString()} ชิ้น`
+      : `มีสินค้า ${product.amount.toLocaleString()} ชิ้น`;
 
   const stockBadgeColor =
     product.amount === 0
-      ? "bg-red-500"
+      ? "text-red-500"
       : product.amount < 10
-      ? "bg-yellow-500"
-      : "bg-green-500";
+      ? "text-yellow-500"
+      : "";
 
   const handleFavoriteClick = async (
-    event: React.MouseEvent<HTMLButtonElement>,
+    event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.stopPropagation(); // หยุดการส่ง event ไปยัง parent
     event.preventDefault(); // หยุดการ redirect
@@ -46,11 +46,12 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
   };
 
   return (
-    <Link
+    <a
       rel="preload"
-      href={`product/${product.name.replace(/ /g, "-")}-${product._id}`}
+      href={`/product/${product.name.replace(/ /g, "-")}-${product._id}`}
       className={`group relative flex w-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm 
-      transition-all duration-300 h-[300px] md:h-[420px]`}>
+      transition-all duration-300 h-[280px] md:h-[380px]`}
+    >
       {/* Image Container */}
       <div className="relative h-[180px] md:h-[260px] w-full overflow-hidden">
         <Image
@@ -61,7 +62,7 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
           }
           alt={product.name}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          sizes="(max-inline-size: 640px) 100vw, (max-inline-size: 768px) 50vw, 33vw"
           className="object-cover transition-transform duration-300"
         />
 
@@ -73,13 +74,6 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
             </span>
           </div>
         )}
-
-        {/* Category Badge */}
-        <div className="absolute bottom-3 left-3">
-          <span className="rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white">
-            {product.category}
-          </span>
-        </div>
       </div>
 
       {/* Product Details */}
@@ -87,7 +81,7 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
         {/* Product Name */}
         <div className="w-full flex items-center gap-2">
           {/* Product Name */}
-          <h4 className="flex-1 line-clamp-2 text-base font-semibold text-gray-800 hover:text-red-500 transition-colors">
+          <h4 className="flex-1 line-clamp-2 self-start text-base font-semibold text-gray-800 hover:text-red-500 transition-colors">
             {product.name}
           </h4>
 
@@ -97,7 +91,8 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
             className="rounded-full bg-white/90 p-2 shadow-md hover:bg-white hover:shadow-lg transition-all"
             aria-label={
               isFavorite ? "Remove from favorites" : "Add to favorites"
-            }>
+            }
+          >
             <Heart
               className={`h-4 md:h-5 w-4 md:w-5 ${
                 favorite
@@ -109,9 +104,8 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
         </div>
 
         {/* Price Section */}
-        <div className="mt-auto space-y-2">
+        <div className="mt-auto">
           <div className="flex items-center gap-2">
-            <CircleDollarSign className="h-5 w-5 text-gray-400" />
             <div className="flex items-center gap-2">
               {product.discount > 0 ? (
                 <>
@@ -129,15 +123,13 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
               )}
             </div>
           </div>
-
-          {/* Stock Status */}
-          <div
-            className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium text-white ${stockBadgeColor}`}>
-            <Package className="h-5 w-5" />
-            <p>{stockStatus}</p>
-          </div>
+        </div>
+        <div className="flex w-full items-end justify-end p" y-2>
+          <p className={`text-sm font-semibold ${stockBadgeColor}`}>
+            {stockStatus}
+          </p>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

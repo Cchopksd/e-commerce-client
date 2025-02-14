@@ -45,10 +45,11 @@ const TrendingProductComponent = ({
               slidesPerView: 3,
             },
             1024: {
-              slidesPerView: 4,
+              slidesPerView: 5,
             },
           }}
-          className="py-4">
+          className="py-4"
+        >
           {trendingProduct.map((product: any) => (
             <SwiperSlide key={product._id}>
               <div className="flex justify-center">

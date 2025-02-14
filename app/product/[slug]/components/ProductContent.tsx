@@ -7,9 +7,16 @@ import {
   LuShoppingCart,
   LuHeart,
   LuShare2,
+  LuChevronRight,
+  LuChevronLeft,
 } from "react-icons/lu";
+
 import { addToCart, favoriteProduct } from "./action";
-import { decrement, increment } from "@/libs/features/cart/cartSlice";
+import {
+  decrement,
+  increment,
+  numberOfItems,
+} from "@/libs/features/cart/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/libs/hooks";
 import { Product } from "@/interface/Product";
 
@@ -26,9 +33,10 @@ export default function ProductContent({
 }: ProductData) {
   const dispatch = useAppDispatch();
 
-  const { value } = useAppSelector((state) => state.cart);
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const [isAdding, setIsAdding] = React.useState(false);
+  const { value, itemsInCart } = useAppSelector((state) => state.cart);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const [isAdding, setIsAdding] = useState(false);
   const images: string[] = [];
 
   const [isFavorite, setIsFavorite] = useState<boolean>(favorite);
@@ -46,7 +54,7 @@ export default function ProductContent({
   });
 
   const discountPercentage = Math.round(
-    ((product.price - product.discount) / product.price) * 100,
+    ((product.price - product.discount) / product.price) * 100
   );
 
   const isSoldOut = product.amount <= 0;
@@ -61,6 +69,8 @@ export default function ProductContent({
 
     setIsAdding(true);
     try {
+      // numberOfItems(value);
+      dispatch(numberOfItems(value + itemsInCart));
       await addToCart(token, product._id, value);
     } catch (error) {
       console.error("Cart submission error:", error);
@@ -84,15 +94,39 @@ export default function ProductContent({
                 </span>
               </div>
             )}
-            <Image
-              src={images[currentImageIndex]}
-              alt={`Product - Image ${currentImageIndex + 1}`}
-              className={`object-contain w-full h-full p-4 ${
-                isSoldOut ? "opacity-75" : ""
-              }`}
-              fill
-              priority
-            />
+
+            {images.length > 0 && (
+              <Image
+                src={images[currentImageIndex]}
+                alt={`Product - Image ${currentImageIndex + 1}`}
+                className={`object-contain w-full h-full p-4 ${
+                  isSoldOut ? "opacity-75" : ""
+                }`}
+                fill
+                priority
+              />
+            )}
+            <button
+              onClick={() => {
+                setCurrentImageIndex((prevIndex) => {
+                  return (prevIndex - 1 + images.length) % images.length;
+                });
+              }}
+              className="absolute left-0 top-1/2 p-2 bg-white/50 hover:bg-white rounded-full mx-4"
+            >
+              <LuChevronLeft />
+            </button>
+
+            <button
+              onClick={() => {
+                setCurrentImageIndex(
+                  (prevIndex) => (prevIndex + 1) % images.length
+                );
+              }}
+              className="absolute right-0 top-1/2 p-2 bg-white/50 hover:bg-white rounded-full mx-4"
+            >
+              <LuChevronRight />
+            </button>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {images.map((img, idx) => (
@@ -104,7 +138,8 @@ export default function ProductContent({
                     currentImageIndex === idx
                       ? "border-blue-500 ring-2 ring-blue-200"
                       : "border-gray-200 hover:border-gray-300"
-                  } transition-all duration-200`}>
+                  } transition-all duration-200`}
+              >
                 <Image
                   src={img}
                   alt={`Thumbnail ${idx + 1}`}
@@ -138,7 +173,8 @@ export default function ProductContent({
                       isFavorite
                         ? "text-red-500 hover:bg-red-50"
                         : "text-gray-600 hover:bg-gray-100"
-                    }`}>
+                    }`}
+                >
                   <LuHeart
                     className="w-5 h-5"
                     fill={isFavorite ? "currentColor" : "none"}
@@ -158,7 +194,8 @@ export default function ProductContent({
                   <span
                     className={`text-3xl font-bold ${
                       isSoldOut ? "text-gray-400" : "text-red-600"
-                    }`}>
+                    }`}
+                  >
                     ฿{product.discount.toLocaleString()}
                   </span>
                   <span className="text-xl text-gray-400 line-through">
@@ -166,7 +203,8 @@ export default function ProductContent({
                   </span>
                   <span
                     className={`px-2 py-1 text-xs font-semibold text-white rounded-md
-                    ${isSoldOut ? "bg-gray-400" : "bg-red-500"}`}>
+                    ${isSoldOut ? "bg-gray-400" : "bg-red-500"}`}
+                  >
                     {discountPercentage}% OFF
                   </span>
                 </>
@@ -174,7 +212,8 @@ export default function ProductContent({
                 <span
                   className={`text-3xl font-bold ${
                     isSoldOut ? "text-gray-400" : "text-gray-900"
-                  }`}>
+                  }`}
+                >
                   ฿{product.price.toLocaleString()}
                 </span>
               )}
@@ -208,7 +247,8 @@ export default function ProductContent({
                       value <= 1 || isSoldOut
                         ? "bg-gray-50 text-gray-400"
                         : "hover:bg-gray-50 active:bg-gray-100"
-                    }`}>
+                    }`}
+                >
                   <LuMinus className="h-4 w-4" />
                 </button>
                 <div className="w-16 text-center border-t border-b py-2">
@@ -222,7 +262,8 @@ export default function ProductContent({
                       value >= product.amount || isSoldOut
                         ? "bg-gray-50 text-gray-400"
                         : "hover:bg-gray-50 active:bg-gray-100"
-                    }`}>
+                    }`}
+                >
                   <LuPlus className="h-4 w-4" />
                 </button>
               </div>
@@ -239,7 +280,8 @@ export default function ProductContent({
                     : isAdding
                     ? "bg-green-500 text-white scale-95"
                     : "bg-blue-600 text-white hover:bg-blue-700 active:scale-95"
-                } disabled:opacity-50 disabled:cursor-not-allowed`}>
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
               <LuShoppingCart
                 className={`h-5 w-5 ${isAdding ? "animate-bounce" : ""}`}
               />

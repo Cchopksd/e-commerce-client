@@ -19,12 +19,14 @@ interface CartState {
   items: CartItem[];
   totalPrice: number;
   value: number;
+  itemsInCart: number;
 }
 
 const initialState: CartState = {
   items: [],
   totalPrice: 0,
   value: 1,
+  itemsInCart: 0,
 };
 
 const cartSlice = createSlice({
@@ -33,6 +35,10 @@ const cartSlice = createSlice({
   reducers: {
     updateCart(state, action: PayloadAction<CartItem[]>) {
       state.items = action.payload;
+    },
+
+    numberOfItems: (state, action) => {
+      state.itemsInCart = action.payload;
     },
 
     increment: (state, action: PayloadAction<number>) => {
@@ -44,7 +50,7 @@ const cartSlice = createSlice({
 
     addItem(state, action: PayloadAction<CartItem>) {
       const existingItem = state.items.find(
-        (item) => item._id === action.payload._id,
+        (item) => item._id === action.payload._id
       );
       if (existingItem) {
         existingItem.quantity += action.payload.quantity;
@@ -58,10 +64,10 @@ const cartSlice = createSlice({
     },
     updateQuantity(
       state,
-      action: PayloadAction<{ itemId: string; quantity: number }>,
+      action: PayloadAction<{ itemId: string; quantity: number }>
     ) {
       const item = state.items.find(
-        (item) => item._id === action.payload.itemId,
+        (item) => item._id === action.payload.itemId
       );
       if (item) {
         item.quantity = action.payload.quantity;
@@ -84,6 +90,7 @@ export const {
   calculateTotal,
   increment,
   decrement,
+  numberOfItems,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

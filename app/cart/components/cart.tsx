@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
 
 import Summary from "./summary";
 
@@ -9,8 +10,11 @@ import { addToCart, reduceFromCart } from "./action";
 import Swal from "sweetalert2";
 import CartEmpty from "./CartEmpty";
 import { CartWithAddress } from "@/interface/Cart";
+import { numberOfItems } from "@/libs/features/cart/cartSlice";
 
 export default function Cart({ cart }: { cart: CartWithAddress }) {
+  const dispatch = useDispatch();
+  const { itemsInCart } = useSelector((state: any) => state.cart);
   const [cartItems, setCartItems] = useState(cart.cart);
 
   const address = cart.address;
@@ -29,15 +33,16 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
   const handleIncreaseItem = (
     item_id: string,
     product_id: string,
-    quantity: number,
+    quantity: number
   ) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item._id === item_id
           ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      ),
+          : item
+      )
     );
+    dispatch(numberOfItems(itemsInCart + quantity));
     addToCart(product_id, quantity);
   };
 
@@ -45,7 +50,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
     item_id: string,
     product_id: string,
     quantity: number,
-    quantity_now: number,
+    quantity_now: number
   ) => {
     if (quantity_now === 1) {
       Swal.fire({
@@ -58,6 +63,7 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
         confirmButtonText: "Yes, delete it!",
       }).then((result) => {
         if (result.isConfirmed) {
+          dispatch(numberOfItems(itemsInCart - quantity));
           deleteItemsElement(item_id);
           reduceFromCart(product_id, quantity);
         }
@@ -68,9 +74,10 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
       prevItems.map((item) =>
         item._id === item_id
           ? { ...item, quantity: item.quantity - quantity }
-          : item,
-      ),
+          : item
+      )
     );
+    dispatch(numberOfItems(itemsInCart - quantity));
     reduceFromCart(product_id, quantity);
   };
 
@@ -104,7 +111,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                   {cartItems.map((product, index) => (
                     <tr
                       key={index}
-                      className="border-b hover:bg-gray-50 transition-colors">
+                      className="border-b hover:bg-gray-50 transition-colors"
+                    >
                       <td className="p-4 text-left flex items-center gap-4">
                         <div className="w-20 h-20 flex-shrink-0">
                           <Image
@@ -117,7 +125,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                         </div>
                         <a
                           href={`product/${product.product_id._id}`}
-                          className="text-gray-800 font-medium truncate border-b hover:border-b-red-200 hover:text-red-400">
+                          className="text-gray-800 font-medium truncate border-b hover:border-b-red-200 hover:text-red-400"
+                        >
                           {product.product_id.name}
                         </a>
                       </td>
@@ -136,10 +145,11 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                                 product._id,
                                 product.product_id._id,
                                 1,
-                                product.quantity,
+                                product.quantity
                               )
                             }
-                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors">
+                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors"
+                          >
                             <Minus size={16} />
                           </button>
                           <span className="text-lg font-medium text-gray-800">
@@ -150,13 +160,14 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                               handleIncreaseItem(
                                 product._id,
                                 product.product_id._id,
-                                1,
+                                1
                               )
                             }
                             disabled={
                               product.quantity >= product.product_id.amount
                             }
-                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50">
+                            className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
+                          >
                             <Plus size={16} />
                           </button>
                         </div>
@@ -183,7 +194,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
               cartItems.map((product, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl shadow-md p-4 flex items-center space-x-4">
+                  className="bg-white rounded-xl shadow-md p-4 flex items-center space-x-4"
+                >
                   <div className="w-20 h-20 flex-shrink-0">
                     <Image
                       src={product.product_id.images[0]}
@@ -196,7 +208,8 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                   <div className="flex-grow">
                     <a
                       href={`product/${product.product_id._id}`}
-                      className="text-gray-800 font-medium block mb-2 truncate">
+                      className="text-gray-800 font-medium block mb-2 truncate"
+                    >
                       {product.product_id.name}
                     </a>
                     <div className="flex justify-between items-center">
@@ -207,10 +220,11 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                               product._id,
                               product.product_id._id,
                               1,
-                              product.quantity,
+                              product.quantity
                             )
                           }
-                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors">
+                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors"
+                        >
                           <Minus size={16} />
                         </button>
                         <span className="text-lg font-medium text-gray-800">
@@ -221,20 +235,21 @@ export default function Cart({ cart }: { cart: CartWithAddress }) {
                             handleIncreaseItem(
                               product._id,
                               product.product_id._id,
-                              1,
+                              1
                             )
                           }
                           disabled={
                             product.quantity >= product.product_id.amount
                           }
-                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50">
+                          className="w-6 h-6 p-1 flex items-center justify-center bg-white border text-gray-600 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
+                        >
                           <Plus size={16} />
                         </button>
                       </div>
                       <div className="text-[#fed28c] font-semibold">
                         ฿
                         {(
-                          (product.product_id.discount ??
+                          (product.product_id.discount ||
                             product.product_id.price) * product.quantity
                         ).toLocaleString()}
                       </div>

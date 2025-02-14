@@ -63,7 +63,7 @@ export default function PaymentContent({
     });
 
     return `${String(duration.hours || 0).padStart(2, "0")} : ${String(
-      duration.minutes || 0,
+      duration.minutes || 0
     ).padStart(2, "0")} : ${String(duration.seconds || 0).padStart(2, "0")}`;
   }, [expirationDate]);
 
@@ -99,10 +99,10 @@ export default function PaymentContent({
           console.log("Payment status updated:", data.status);
 
           if (data.status === "paid") {
-            window.location.href = "/";
+            window.location.href = "/profile/order?status=in-process";
           }
         }
-      },
+      }
     );
 
     socket.on("connect_error", (err) => {
@@ -145,7 +145,8 @@ export default function PaymentContent({
                   : status === "pending"
                   ? "text-yellow-600"
                   : "text-red-600"
-              }`}>
+              }`}
+            >
               {status === "paid"
                 ? "ชำระเงินแล้ว"
                 : status === "pending"

@@ -121,7 +121,7 @@ export default function OrderContainer({
           loadMoreOrders();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (observerTarget.current) {
@@ -136,7 +136,7 @@ export default function OrderContainer({
       statusConfig: getStatusConfig(order.status),
       totalAmount: order.items.reduce(
         (sum, item) => sum + item.price_at_purchase * item.quantity,
-        0,
+        0
       ),
     }));
   }, [orderList]);
@@ -165,7 +165,8 @@ export default function OrderContainer({
                     </span>
                   </div>
                   <span
-                    className={`px-4 py-1.5 rounded-full text-white text-sm font-medium ${statusConfig.color}`}>
+                    className={`px-4 py-1.5 rounded-full text-white text-sm font-medium ${statusConfig.color}`}
+                  >
                     {statusConfig.actionText}
                   </span>
                 </div>
@@ -174,7 +175,8 @@ export default function OrderContainer({
                   {order.items.map((item) => (
                     <div
                       key={item.product_id._id}
-                      className="group flex flex-col gap-2">
+                      className="group flex flex-col gap-2"
+                    >
                       <div className="flex justify-between items-center hover:bg-gray-50 p-2 rounded-lg transition-colors">
                         <div className="flex gap-6 items-center">
                           <div className="relative w-24 h-24 rounded-lg overflow-hidden">
@@ -222,7 +224,8 @@ export default function OrderContainer({
                     {order.status == "successfully" && (
                       <button
                         // onClick={() => openReviewModal(order.id)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      >
                         ให้คะแนนและรีวิว
                       </button>
                     )}
@@ -230,29 +233,33 @@ export default function OrderContainer({
                       <button
                         onClick={() =>
                           handleCartSubmit(
-                            order.items.map((item) => item.product_id._id),
+                            order.items.map((item) => item.product_id._id)
                           )
                         }
-                        className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
                         ซื้ออีกครั้ง
                       </button>
                     )}
                     <a
                       href={`/profile/order/${order._id}`}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                    >
                       ดูรายละเอียด
                     </a>
 
                     {order.status === "unpaid" ? (
                       <a
                         href={`/payment/${order.payment_id}`}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                      >
                         ชำระเงิน
                       </a>
                     ) : order.status === "delivered" ? (
                       <button
                         onClick={() => updateOrderSuccess(order._id)}
-                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                      >
                         ได้รับแล้ว
                       </button>
                     ) : (

@@ -13,15 +13,15 @@ export default async function page({
 }) {
   const orderStatus = searchParams.status || OrderStatus.All;
 
-  const orders = await getUserOrders({
+  const { detail } = await getUserOrders({
     orderStatus: orderStatus,
     page: 1,
   });
 
-  const orderList = orders.orders;
-  const totalOrders = orders.total_items;
-  const totalPage = orders.total_page;
-  const currentPage = orders.page_now;
+  const orderList = detail.orders;
+  const totalOrders = detail.total_items;
+  const totalPage = detail.total_page;
+  const currentPage = detail.page_now;
 
   return (
     <div className="w-full h-full space-y-4">

@@ -48,11 +48,8 @@ export async function loginWithGoogle() {
     const { url } = await response.json();
 
     // Redirect on the client side
-    if (typeof window !== "undefined") {
-      window.location.href = url;
-    } else {
-      return redirect(url);
-    }
+
+    return redirect(url);
   } catch (error) {
     console.error("Error during login:", error);
     throw error;

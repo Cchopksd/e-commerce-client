@@ -40,12 +40,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
-    "idle",
+    "idle"
   );
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(
-    userData?.profile_image?.[0]?.image_url || null,
+    userData?.profile_image?.[0]?.image_url || null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -141,7 +141,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
       if (key !== "_id" && key !== "role" && key !== "__v") {
         const error = validateField(
           key,
-          formDataValue[key as keyof UserData]?.toString() || "",
+          formDataValue[key as keyof UserData]?.toString() || ""
         );
         if (error) newErrors[key] = error;
       }
@@ -183,7 +183,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
   const renderField = (
     name: keyof UserData,
     label: string,
-    type: string = "text",
+    type: string = "text"
   ) => {
     const value = formDataValue[name];
     const error = errors[name];
@@ -236,73 +236,77 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
   const renderImageUpload = () => {
     return (
       <div className="col-span-full">
-        {isEditing ? (
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/jpeg,image/png,image/gif"
-                className="hidden"
-              />
-              <div
-                className={`
-                  w-32 h-32 rounded-full border-2 flex items-center justify-center
-                  ${
-                    previewImage
-                      ? "border-blue-500"
-                      : "border-dashed border-gray-300"
-                  }
-                  hover:border-blue-500 transition-colors cursor-pointer
-                `}
-                onClick={() => fileInputRef.current?.click()}>
-                {previewImage ? (
-                  <Image
-                    fill
-                    src={previewImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <div className="text-center text-gray-400 flex flex-col items-center">
-                    <Upload className="w-8 h-8 mb-2" />
-                    <span className="text-xs">Upload Image</span>
-                  </div>
-                )}
+        <div className="flex w-full items-center justify-center py-4">
+          {isEditing ? (
+            <div className="flex flex-col gap-4 justify-center items-center space-x-4">
+              <div className="relative">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/jpeg,image/png,image/gif"
+                  className="hidden"
+                />
+                <div
+                  className={`
+                    w-32 h-32 rounded-full border-2 flex items-center justify-center
+                    ${
+                      previewImage
+                        ? "border-blue-500"
+                        : "border-dashed border-gray-300"
+                    }
+                    hover:border-blue-500 transition-colors cursor-pointer
+                  `}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {previewImage ? (
+                    <Image
+                      fill
+                      src={previewImage}
+                      alt="Profile"
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  ) : (
+                    <div className="text-center text-gray-400 flex flex-col items-center">
+                      <Upload className="w-8 h-8 mb-2" />
+                      <span className="text-xs">Upload Image</span>
+                    </div>
+                  )}
+                </div>
               </div>
+              {previewImage && (
+                <button
+                  type="button"
+                  onClick={handleImageRemove}
+                  className="text-red-600 hover:text-red-800 flex items-center"
+                >
+                  <Trash2 className="mr-1 h-5 w-5" /> Remove
+                </button>
+              )}
             </div>
-            {previewImage && (
-              <button
-                type="button"
-                onClick={handleImageRemove}
-                className="text-red-600 hover:text-red-800 flex items-center">
-                <Trash2 className="mr-1 h-5 w-5" /> Remove
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="w-32 h-32 rounded-full border-2 border-gray-300">
-            {previewImage ? (
-              <Image
-                width={100}
-                height={100}
-                src={previewImage}
-                alt="Profile"
-                className="w-full h-full object-cover rounded-full"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                No Image
-              </div>
-            )}
-          </div>
-        )}
-        {errors.profileImage && (
-          <p className="mt-1 text-xs text-red-600 flex items-center">
-            <AlertTriangle className="mr-1 h-4 w-4" /> {errors.profileImage}
-          </p>
-        )}
+          ) : (
+            <div className="w-32 h-32 rounded-full border-2 border-gray-300">
+              {previewImage ? (
+                <Image
+                  width={100}
+                  height={100}
+                  src={previewImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  No Image
+                </div>
+              )}
+            </div>
+          )}
+          {errors.profileImage && (
+            <p className="mt-1 text-xs text-red-600 flex items-center">
+              <AlertTriangle className="mr-1 h-4 w-4" /> {errors.profileImage}
+            </p>
+          )}
+        </div>
       </div>
     );
   };
@@ -311,7 +315,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-4xl mx-auto p-4 md:p-8 bg-white shadow-lg rounded-xl">
+      className="max-w-4xl mx-auto p-4 md:p-8 bg-white shadow-lg rounded-xl"
+    >
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
           Account Information
@@ -325,7 +330,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
                 onClick={handleSave}
                 disabled={isSubmitting}
                 className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg 
-                  hover:bg-green-700 transition-colors disabled:opacity-50">
+                  hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
                 <Save className="mr-2 h-5 w-5" />
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </motion.button>
@@ -338,7 +344,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
                   setErrors({});
                 }}
                 className="flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg 
-                  hover:bg-gray-300 transition-colors">
+                  hover:bg-gray-300 transition-colors"
+              >
                 <X className="mr-2 h-5 w-5" /> Cancel
               </motion.button>
             </>
@@ -348,7 +355,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsEditing(true)}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg 
-                hover:bg-blue-700 transition-colors">
+                hover:bg-blue-700 transition-colors"
+            >
               <Edit className="mr-2 h-5 w-5" /> Edit Profile
             </motion.button>
           )}
