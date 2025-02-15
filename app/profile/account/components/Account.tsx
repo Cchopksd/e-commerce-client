@@ -13,11 +13,6 @@ import {
 import { updateUserInfo } from "./action";
 import Image from "next/image";
 
-interface Image {
-  image_url: string;
-  public_id: string;
-}
-
 interface UserData {
   _id: string;
   email: string;
@@ -27,7 +22,7 @@ interface UserData {
   phone: string;
   age: number;
   role: string;
-  profile_image?: Image[];
+  profile_image: string;
 }
 
 interface EditProfileProps {
@@ -45,7 +40,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(
-    userData?.profile_image?.[0]?.image_url || null
+    userData?.profile_image || null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -218,11 +213,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
             {Array.isArray(value)
               ? value.map((img) => (
                   <Image
-                    key={img.public_id}
-                    src={img.image_url}
+                    src={img}
                     alt="Profile"
-                    width={50}
-                    height={50}
+                    width={100}
+                    height={100}
                     className="inline-block rounded-full"
                   />
                 ))
@@ -260,12 +254,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {previewImage ? (
-                    <Image
-                      fill
-                      src={previewImage}
-                      alt="Profile"
-                      className="w-full h-full object-cover rounded-full"
-                    />
+                    <div className="w-32 h-32 rounded-full overflow-hidden">
+                      <Image
+                        fill
+                        src={previewImage}
+                        alt="Profile"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    </div>
                   ) : (
                     <div className="text-center text-gray-400 flex flex-col items-center">
                       <Upload className="w-8 h-8 mb-2" />
@@ -287,13 +283,15 @@ const EditProfile: React.FC<EditProfileProps> = ({ userData }) => {
           ) : (
             <div className="w-32 h-32 rounded-full border-2 border-gray-300">
               {previewImage ? (
-                <Image
-                  width={100}
-                  height={100}
-                  src={previewImage}
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-full"
-                />
+                <div className="w-32 h-32 rounded-full overflow-hidden">
+                  <Image
+                    width={300}
+                    height={300}
+                    src={previewImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                   No Image

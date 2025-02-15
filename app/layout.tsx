@@ -14,26 +14,16 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: {
-    default: "KIRAMIZ - Your Fashion Destination",
+    default: "ช้อปสินค้าออนไลน์คุณภาพดี ราคาคุ้มค่า | kiramiz",
     template: "%s | KIRAMIZ",
   },
   description:
-    "Discover the latest fashion trends at KIRAMIZ. Shop our collection of high-quality clothing, accessories, and more.",
-  keywords: [
-    "fashion",
-    "clothing",
-    "accessories",
-    "online shopping",
-    "KIRAMIZ",
-  ],
-  authors: [{ name: "KIRAMIZ" }],
+    "Kiramiz แพลตฟอร์มช้อปปิ้งออนไลน์ที่รวมสินค้าแฟชั่น, อุปกรณ์อิเล็กทรอนิกส์, ของใช้ในบ้าน และสินค้าไลฟ์สไตล์คุณภาพดี พร้อมโปรโมชั่นสุดพิเศษทุกวัน",
   openGraph: {
     title: "KIRAMIZ - Your Fashion Destination",
     description:
       "Discover the latest fashion trends at KIRAMIZ. Shop our collection of high-quality clothing, accessories, and more.",
     url: "https://kiramiz.com",
-    siteName: "KIRAMIZ",
-    type: "website",
   },
   robots: {
     index: true,
@@ -50,9 +40,9 @@ export default async function RootLayout({
     <ReduxProvider>
       <html>
         <body
-          className={`${roboto.className} antialiased flex-1 h-full min-h-screen`}>
+          className={`${roboto.className} antialiased flex-1 h-full min-h-screen bg-slate-100`}
+        >
           <Navbar />
-
           {children}
           <Footer />
         </body>

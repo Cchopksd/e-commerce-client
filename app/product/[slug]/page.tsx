@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata, ResolvingMetadata } from "next";
 import { fetchFamiliarProduct, fetchProductByID } from "./components/action";
 import ProductContent from "./components/ProductContent";
 import { decryptToken, getToken } from "@/app/utils/token";
@@ -10,6 +11,38 @@ interface ProductResult {
   product: Product;
   reviews: ReviewType[];
   favorite: boolean;
+}
+
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const slug = (await params).slug;
+
+  const token = await getToken();
+  const userInfo = await decryptToken(token);
+  const product_slug = slug.split("-").pop();
+
+  const { product } = await fetchProductByID({
+    product_id: product_slug || "",
+    user_id: (userInfo?.sub as string) || "",
+  });
+
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: product.title,
+    openGraph: {
+      images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
+  };
 }
 
 export default async function page({ params }: { params: { slug: string } }) {

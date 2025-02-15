@@ -50,7 +50,7 @@ export default function ProductCard({ product, isFavorite }: ProductCardProps) {
       rel="preload"
       href={`/product/${product.name.replace(/ /g, "-")}-${product._id}`}
       className={`group relative flex w-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm 
-      transition-all duration-300 h-[280px] md:h-[380px]`}
+      transition-all duration-300 h-[280px] md:h-[380px] max-w-[260px]`}
     >
       {/* Image Container */}
       <div className="relative h-[180px] md:h-[260px] w-full overflow-hidden">

@@ -79,7 +79,6 @@ export default function Sidebar({ userInfo }: { userInfo: any }) {
                 alt={`${userInfo.username}'s profile`}
                 fill
                 className="rounded-full object-cover bg-white shadow-md p-1"
-                sizes="(max-width: 768px) 4rem, 5rem"
               />
             </div>
             <h4 className="text-base md:text-lg font-semibold">
