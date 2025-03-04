@@ -138,8 +138,9 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
         <div className="p-4">
           <div
             className={`inline-flex items-center px-3 py-1 rounded-full border ${getStatusColor(
-              order.order_detail.status,
-            )}`}>
+              order.order_detail.status
+            )}`}
+          >
             <Clock className="w-4 h-4 mr-2" />
             <span className="font-medium">
               {getStatusText(order.order_detail.status)}
@@ -214,14 +215,14 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
                   <div className="text-right">
                     <div className="mt-1 flex items-center gap-2 justify-end">
                       <span className="text-sm line-through text-gray-500">
-                        ฿{product.product_id.price}
+                        ฿{product.product_id.price.toLocaleString()}
                       </span>
                       <span className="font-medium text-green-600">
-                        ฿{product.price_at_purchase}
+                        ฿{product.price_at_purchase.toLocaleString()}
                       </span>
                     </div>
                     <span className="text-sm text-gray-500 mt-1 block">
-                      จำนวน: {product.quantity}
+                      จำนวน: {product.quantity.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -250,8 +251,9 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
             <span className="text-gray-600">สถานะ</span>
             <span
               className={`font-medium ${getStatusColor(
-                order.order_detail.payment_id.status,
-              )}`}>
+                order.order_detail.payment_id.status
+              )}`}
+            >
               {order.order_detail.payment_id.status === "pending"
                 ? "รอการชำระเงิน"
                 : "ชำระเงินแล้ว"}
@@ -261,7 +263,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-900">ยอดรวมทั้งหมด</span>
               <span className="font-medium text-lg text-gray-900">
-                ฿{order.order_detail.payment_id.amount / 100}
+                ฿{(order.order_detail.payment_id.amount / 100).toLocaleString()}
               </span>
             </div>
           </div>
