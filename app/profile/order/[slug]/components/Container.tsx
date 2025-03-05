@@ -1,6 +1,13 @@
 "use client";
 import React from "react";
-import { Package, MapPin, CreditCard, Clock } from "lucide-react";
+import {
+  Package,
+  MapPin,
+  CreditCard,
+  Clock,
+  Truck,
+  CheckCircle,
+} from "lucide-react";
 import Image from "next/image";
 
 interface ShippingAddress {
@@ -62,15 +69,6 @@ interface OrderDetailsProps {
   order: Order;
 }
 
-interface Order {
-  order_detail: OrderDetail;
-  products: Product[];
-}
-
-interface OrderDetailsProps {
-  order: Order;
-}
-
 const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -121,6 +119,21 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "unpaid":
+        return <Clock className="w-5 h-5" />;
+      case "paid":
+        return <CheckCircle className="w-5 h-5" />;
+      case "in-process":
+        return <Package className="w-5 h-5" />;
+      case "delivered":
+        return <Truck className="w-5 h-5" />;
+      default:
+        return <Clock className="w-5 h-5" />;
+    }
+  };
+
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleString("th-TH", {
       year: "numeric",
@@ -131,140 +144,351 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order }) => {
     });
   };
 
+  // Calculate subtotal, discount, and total
+  const calculateOrderSummary = () => {
+    const subtotal = order.products.reduce(
+      (sum, item) => sum + item.product_id.price * item.quantity,
+      0
+    );
+
+    const actualTotal = order.products.reduce(
+      (sum, item) => sum + item.price_at_purchase * item.quantity,
+      0
+    );
+
+    const discount = subtotal - actualTotal;
+
+    return {
+      subtotal,
+      discount,
+      total: order.order_detail.payment_id.amount / 100,
+    };
+  };
+
+  const { subtotal, discount, total } = calculateOrderSummary();
+
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
-      {/* Order Status */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4">
-          <div
-            className={`inline-flex items-center px-3 py-1 rounded-full border ${getStatusColor(
-              order.order_detail.status
-            )}`}
-          >
-            <Clock className="w-4 h-4 mr-2" />
-            <span className="font-medium">
-              {getStatusText(order.order_detail.status)}
-            </span>
+    <div className="max-w-3xl mx-auto py-6 px-4 sm:px-6 space-y-6">
+      {/* Order Status Header */}
+      <div className="bg-white rounded-xl shadow overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">
+                รายละเอียดคำสั่งซื้อ
+              </h1>
+              <p className="text-gray-600 mt-1">
+                สถานะคำสั่งซื้อ:
+                <span
+                  className={`ml-2 font-medium ${
+                    order.order_detail.status === "cancelled" ||
+                    order.order_detail.status === "failed"
+                      ? "text-red-600"
+                      : "text-blue-600"
+                  }`}
+                >
+                  {getStatusText(order.order_detail.status)}
+                </span>
+              </p>
+            </div>
+            <div
+              className={`flex items-center p-3 rounded-lg ${getStatusColor(
+                order.order_detail.status
+              )}`}
+            >
+              {getStatusIcon(order.order_detail.status)}
+              <span className="font-medium ml-2">
+                {getStatusText(order.order_detail.status)}
+              </span>
+            </div>
           </div>
-          {order.order_detail.payment_id.expires_at && (
-            <p className="mt-2 text-sm text-gray-500">
-              หมดเขตชำระเงิน:{" "}
-              {formatDate(order.order_detail.payment_id.expires_at)}
-            </p>
-          )}
         </div>
-      </div>
 
-      {/* Shipping Address Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-gray-600" />
-            ที่อยู่จัดส่ง
-          </h2>
-        </div>
-        <div className="p-4 space-y-2">
-          <p className="font-medium">
-            {order.order_detail.shipping_address.name}
-          </p>
-          <p className="text-gray-600">
-            {order.order_detail.shipping_address.detail}
-          </p>
-          <p className="text-gray-600">
-            {order.order_detail.shipping_address.subdistrict}{" "}
-            {order.order_detail.shipping_address.district}
-          </p>
-          <p className="text-gray-600">
-            {order.order_detail.shipping_address.province}{" "}
-            {order.order_detail.shipping_address.post_id}
-          </p>
-        </div>
-      </div>
-
-      {/* Products Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Package className="w-5 h-5 text-gray-600" />
-            รายการสินค้า
-          </h2>
-        </div>
-        <div className="divide-y divide-gray-200">
-          {order.products.map((product, index) => (
-            <div key={index} className="p-4 flex items-center gap-4">
-              <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
-                <Image
-                  src={product.product_id.images[0].image_url}
-                  alt={product.product_id.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {product.product_id.name}
-                    </h3>
-                    {product.product_id.category && (
-                      <span className="text-sm text-gray-500 mt-1 block">
-                        หมวดหมู่: {product.product_id.category}
-                      </span>
-                    )}
+        {/* Order Progress Tracking */}
+        {order.order_detail.status !== "cancelled" &&
+          order.order_detail.status !== "failed" && (
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex justify-between items-center relative">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`rounded-full w-8 h-8 flex items-center justify-center ${
+                      order.order_detail.status !== "unpaid"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    <CheckCircle className="w-5 h-5" />
                   </div>
-                  <div className="text-right">
-                    <div className="mt-1 flex items-center gap-2 justify-end">
-                      <span className="text-sm line-through text-gray-500">
-                        ฿{product.product_id.price.toLocaleString()}
-                      </span>
-                      <span className="font-medium text-green-600">
-                        ฿{product.price_at_purchase.toLocaleString()}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-500 mt-1 block">
-                      จำนวน: {product.quantity.toLocaleString()}
-                    </span>
+                  <span className="text-xs mt-1 text-center">ชำระเงิน</span>
+                </div>
+                <div className="flex-1 h-1 mx-2 bg-gray-200">
+                  <div
+                    className="h-full bg-green-500"
+                    style={{
+                      width:
+                        order.order_detail.status === "unpaid"
+                          ? "0%"
+                          : order.order_detail.status === "paid"
+                          ? "33%"
+                          : order.order_detail.status === "in-process"
+                          ? "100%"
+                          : "100%",
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`rounded-full w-8 h-8 flex items-center justify-center ${
+                      order.order_detail.status === "in-process" ||
+                      order.order_detail.status === "delivered" ||
+                      order.order_detail.status === "successfully"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    <Package className="w-5 h-5" />
                   </div>
+                  <span className="text-xs mt-1 text-center">จัดส่ง</span>
+                </div>
+                <div className="flex-1 h-1 mx-2 bg-gray-200">
+                  <div
+                    className="h-full bg-green-500"
+                    style={{
+                      width:
+                        order.order_detail.status === "unpaid" ||
+                        order.order_detail.status === "paid"
+                          ? "0%"
+                          : order.order_detail.status === "in-process"
+                          ? "50%"
+                          : "100%",
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`rounded-full w-8 h-8 flex items-center justify-center ${
+                      order.order_detail.status === "delivered" ||
+                      order.order_detail.status === "successfully"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200"
+                    }`}
+                  >
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs mt-1 text-center">ได้รับสินค้า</span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          )}
+
+        {/* Expiry Information */}
+        {order.order_detail.status === "unpaid" &&
+          order.order_detail.payment_id.expires_at && (
+            <div className="bg-yellow-50 p-4 flex items-center">
+              <Clock className="w-5 h-5 text-yellow-700 mr-2" />
+              <p className="text-sm text-yellow-700">
+                <span className="font-medium">หมดเขตชำระเงิน:</span>{" "}
+                {formatDate(order.order_detail.payment_id.expires_at)}
+              </p>
+            </div>
+          )}
       </div>
 
-      {/* Payment Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-gray-600" />
-            ข้อมูลการชำระเงิน
-          </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Products Section - Wider Column */}
+        <div className="md:col-span-2 space-y-6">
+          {/* Products Section */}
+          <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Package className="w-5 h-5 text-blue-600" />
+                รายการสินค้า
+              </h2>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {order.products.map((product, index) => (
+                <div
+                  key={index}
+                  className="p-4 hover:bg-gray-50 transition duration-150"
+                >
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div className="w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
+                      <Image
+                        src={product.product_id.images[0].image_url}
+                        alt={product.product_id.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900">
+                        {product.product_id.name}
+                      </h3>
+                      {product.product_id.category && (
+                        <span className="text-sm text-gray-500 mt-1 block">
+                          หมวดหมู่: {product.product_id.category}
+                        </span>
+                      )}
+                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <div className="flex items-center">
+                          <span className="text-sm text-gray-500 mr-1">
+                            ราคา:
+                          </span>
+                          <span className="text-sm line-through text-gray-500 mr-2">
+                            ฿{product.product_id.price.toLocaleString()}
+                          </span>
+                          <span className="font-medium text-green-600">
+                            ฿{product.price_at_purchase.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-sm text-gray-500 mr-1">
+                            จำนวน:
+                          </span>
+                          <span className="font-medium">
+                            {product.quantity.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-sm text-gray-500 mr-1">
+                            รวม:
+                          </span>
+                          <span className="font-medium">
+                            ฿
+                            {(
+                              product.price_at_purchase * product.quantity
+                            ).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Shipping Address Section */}
+          <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-blue-600" />
+                ที่อยู่จัดส่ง
+              </h2>
+            </div>
+            <div className="p-4">
+              <div className="flex flex-col md:flex-row md:items-start gap-4">
+                <div className="bg-blue-50 p-3 rounded-lg md:pt-1">
+                  <MapPin className="w-8 h-8 text-blue-500" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-medium text-gray-900">
+                    {order.order_detail.shipping_address.name}
+                  </p>
+                  <p className="text-gray-600">
+                    {order.order_detail.shipping_address.detail}
+                  </p>
+                  <p className="text-gray-600">
+                    {order.order_detail.shipping_address.subdistrict}{" "}
+                    {order.order_detail.shipping_address.district}
+                  </p>
+                  <p className="text-gray-600">
+                    {order.order_detail.shipping_address.province}{" "}
+                    {order.order_detail.shipping_address.post_id}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="p-4 space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">วิธีการชำระเงิน</span>
-            <span className="font-medium">
-              {order.order_detail.payment_id.payment_method}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">สถานะ</span>
-            <span
-              className={`font-medium ${getStatusColor(
-                order.order_detail.payment_id.status
-              )}`}
-            >
-              {order.order_detail.payment_id.status === "pending"
-                ? "รอการชำระเงิน"
-                : "ชำระเงินแล้ว"}
-            </span>
-          </div>
-          <div className="pt-4 mt-4 border-t border-gray-200">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-900">ยอดรวมทั้งหมด</span>
-              <span className="font-medium text-lg text-gray-900">
-                ฿{(order.order_detail.payment_id.amount / 100).toLocaleString()}
-              </span>
+
+        {/* Payment Section - Side Column */}
+        <div className="md:col-span-1">
+          <div className="bg-white rounded-xl shadow overflow-hidden sticky top-6">
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-blue-600" />
+                ข้อมูลการชำระเงิน
+              </h2>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">วิธีการชำระเงิน</span>
+                <span className="font-medium">
+                  {order.order_detail.payment_id.payment_method}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">สถานะ</span>
+                <span
+                  className={`px-2 py-1 rounded-full text-sm font-medium ${
+                    order.order_detail.payment_id.status === "paid"
+                      ? "bg-green-100 text-green-700"
+                      : order.order_detail.payment_id.status === "pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {order.order_detail.payment_id.status === "pending"
+                    ? "รอการชำระเงิน"
+                    : "ชำระเงินแล้ว"}
+                </span>
+              </div>
+
+              {order.order_detail.payment_id.paid_at && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">วันที่ชำระเงิน</span>
+                  <span className="font-medium">
+                    {formatDate(order.order_detail.payment_id.paid_at)}
+                  </span>
+                </div>
+              )}
+
+              <div className="pt-3 mt-3 border-t border-gray-200 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">ราคาสินค้ารวม</span>
+                  <span className="font-medium">
+                    ฿{subtotal.toLocaleString()}
+                  </span>
+                </div>
+
+                {discount > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">ส่วนลด</span>
+                    <span className="font-medium text-green-600">
+                      -฿{discount.toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">ค่าจัดส่ง</span>
+                  <span className="font-medium">
+                    {total - (subtotal - discount) > 0
+                      ? `฿${(total - (subtotal - discount)).toLocaleString()}`
+                      : "ฟรี"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 mt-3 border-t border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-gray-900">
+                    ยอดรวมทั้งหมด
+                  </span>
+                  <span className="font-semibold text-lg text-blue-600">
+                    ฿{total.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {order.order_detail.status === "unpaid" && (
+                <div className="pt-4">
+                  <button className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-150">
+                    ชำระเงิน
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

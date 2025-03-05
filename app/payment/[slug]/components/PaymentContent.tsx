@@ -33,7 +33,7 @@ export default function PaymentContent({
   paymentDetail,
   userDetail,
 }: PaymentContentProps) {
-  const status = paymentDetail.status;
+  const status = paymentDetail?.status;
   const [timeLeft, setTimeLeft] = useState<string>("loading...");
   const [error, setError] = useState<string | null>(null);
   const expirationDate = paymentDetail?.transaction_details?.expires_at;
