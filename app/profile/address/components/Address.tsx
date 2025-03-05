@@ -80,7 +80,9 @@ const AddressCard = ({ address }: { address: AddressData }) => {
         {/* Footer with timestamp */}
         <div className="flex items-center text-xs text-gray-400 pt-2 border-t border-gray-50">
           <Clock className="w-3 h-3 mr-1" />
-          <span>Added {formatDate(address.createdAt)}</span>
+          <span>
+            Added {new Date(address.createdAt).toLocaleDateString("th-TH")}
+          </span>
         </div>
       </div>
     </div>
@@ -101,7 +103,8 @@ export default function AddressCardList({
         <div className="flex w-full justify-end">
           <button
             onClick={() => setOpenModal(true)}
-            className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
             เพิ่มที่อยู่ใหม่
           </button>
         </div>
@@ -123,7 +126,8 @@ export default function AddressCardList({
             <div className="py-4">
               <a
                 href="/profile/address/add-new-address"
-                className="px-4 py-2 max-w-32 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                className="px-4 py-2 max-w-32 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
                 เพิ่มที่อยู่ใหม่
               </a>
             </div>
