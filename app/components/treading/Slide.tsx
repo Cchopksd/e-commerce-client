@@ -8,9 +8,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import ProductCard from "@/app/product/components/ProductCard";
+import { Product } from "@/interface/Product";
 
 interface TrendingProductComponentProps {
-  trendingProduct: any;
+  trendingProduct: Product[];
 }
 
 const TrendingProductComponent = ({
@@ -29,8 +30,8 @@ const TrendingProductComponent = ({
   };
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="relative">
+    <div className='w-full flex flex-col'>
+      <div className='relative'>
         <Swiper
           modules={[Autoplay, Navigation, Pagination]}
           spaceBetween={20}
@@ -48,12 +49,14 @@ const TrendingProductComponent = ({
               slidesPerView: 5,
             },
           }}
-          className="py-4"
-        >
-          {trendingProduct.map((product: any) => (
+          className='py-4'>
+          {trendingProduct.map((product) => (
             <SwiperSlide key={product._id}>
-              <div className="flex justify-center">
-                <ProductCard product={product} isFavorite={product.favorite} />
+              <div className='flex justify-center'>
+                <ProductCard
+                  product={product}
+                  isFavorite={product.favorite}
+                />
               </div>
             </SwiperSlide>
           ))}
@@ -61,9 +64,9 @@ const TrendingProductComponent = ({
       </div>
 
       {/* Progress bar */}
-      <div className="w-full bg-gray-200 mt-4 h-1 rounded-full overflow-hidden">
+      <div className='w-full bg-gray-200 mt-4 h-1 rounded-full overflow-hidden'>
         <div
-          className="bg-gray-500 h-1 transition-all duration-300 ease-in-out"
+          className='bg-gray-500 h-1 transition-all duration-300 ease-in-out'
           style={{ width: `${progress * 100}%` }}
         />
       </div>

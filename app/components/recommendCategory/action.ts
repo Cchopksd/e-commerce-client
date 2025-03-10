@@ -7,7 +7,7 @@ export async function fetchRecommendCategory({
 }) {
   try {
     const response = await fetch(
-      `${process.env.HOST_NAME}/product?page=1&limit=5&category=electronics`
+      `${process.env.HOST_NAME}/product?page=1&limit=4&category=${category}`
     );
 
     if (!response.ok) {
