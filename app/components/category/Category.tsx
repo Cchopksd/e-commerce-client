@@ -131,17 +131,17 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ category }: { category: CategoryCardProps }) => {
   return (
-    <div className="flex flex-col items-center cursor-pointer group gap-4">
-      <div className="w-full h-full max-w-24 max-h-24">
+    <div className='flex flex-col items-center cursor-pointer group gap-4'>
+      <div className='w-full h-full max-w-28 max-h-28'>
         <Image
           src={category.image}
           alt={category.name}
-          width={160}
-          height={160}
-          className="object-cover transition-transform duration-300 group-hover:scale-105 w-24 h-24 rounded-xl  mb-3 relative shadow-lg hover:shadow-xl "
+          width={200}
+          height={200}
+          className='object-cover transition-transform duration-300 group-hover:scale-105 w-28 h-28 rounded-xl  mb-3 relative shadow-lg hover:shadow-xl '
         />
       </div>
-      <span className="flex text-center justify-start text-xs sm:text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors duration-200 ">
+      <span className='flex text-center justify-start text-xs sm:text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors duration-200 '>
         {category.name}
       </span>
     </div>
@@ -150,14 +150,17 @@ const CategoryCard = ({ category }: { category: CategoryCardProps }) => {
 
 const CategorySection = () => {
   return (
-    <div className="w-full mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-8 text-gray-800">
-        หมวดหมู่ยอดนิยม
-      </h2>
-      <div className="grid grid-cols-10  gap-6">
-        {categories.map((category) => (
-          <CategoryCard key={category.id} category={category} />
-        ))}
+    <div className='w-full mx-auto px-4 py-4'>
+      <h2 className='text-2xl font-bold mb-8 text-gray-800'>หมวดหมู่ยอดนิยม</h2>
+      <div className='max-w-[1440px] overflow-x-auto py-4'>
+        <div className='w-[1440px] grid grid-cols-10 gap-6'>
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

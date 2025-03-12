@@ -32,6 +32,7 @@ export const decryptToken = async (token: string) => {
     return "";
   }
 };
+
 export const getToken = async () => {
   try {
     const cookieStore = await cookies();
@@ -41,8 +42,21 @@ export const getToken = async () => {
     }
     return token;
   } catch (error) {
-    console.log("Token decryption error:", error);
+    console.error("Token decryption error:", error);
     return "";
+  }
+};
+
+export const getTokenInfo = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      return null;
+    }
+    return await decryptToken(token);
+  } catch (error) {
+    console.error("Token decryption error:", error);
+    return null;
   }
 };
 
@@ -54,7 +68,7 @@ export const logout = async () => {
     }
     return true;
   } catch (error) {
-    console.log("Token decryption error:", error);
+    console.error("Token decryption error:", error);
     return null;
   }
 };

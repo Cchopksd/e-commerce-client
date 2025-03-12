@@ -18,7 +18,7 @@ export default function Pagination({
 }: Pagination) {
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
-
+    console.log(totalPages);
     if (totalPages <= maxVisible) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
@@ -62,25 +62,27 @@ export default function Pagination({
     window.location.href = `${search}&page=${page}`;
   };
 
+  console.log(getPageNumbers());
+
   return (
     <nav
-      className="flex items-center justify-center space-x-2"
-      role="navigation"
-      aria-label="Pagination">
+      className='flex items-center justify-center space-x-2'
+      role='navigation'
+      aria-label='Pagination'>
       <button
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Previous page">
-        <IoIosArrowBack className="w-5 h-5" />
+        className='p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed'
+        aria-label='Previous page'>
+        <IoIosArrowBack className='w-5 h-5' />
       </button>
 
-      <div className="hidden sm:flex items-center space-x-1">
+      <div className='hidden sm:flex items-center space-x-1'>
         {getPageNumbers().map((page: any, index) =>
           page === "..." ? (
             <IoIosMore
               key={`ellipsis-${index}`}
-              className="w-5 h-5 text-gray-400"
+              className='w-5 h-5 text-gray-400'
             />
           ) : (
             <button
@@ -93,11 +95,11 @@ export default function Pagination({
               }`}>
               {page}
             </button>
-          ),
+          )
         )}
       </div>
 
-      <div className="sm:hidden text-sm">
+      <div className='sm:hidden text-sm'>
         <span>
           Page {currentPage} of {totalPages}
         </span>
@@ -110,9 +112,9 @@ export default function Pagination({
           }
         }}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Next page">
-        <IoIosArrowForward className="w-5 h-5" />
+        className='p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed'
+        aria-label='Next page'>
+        <IoIosArrowForward className='w-5 h-5' />
       </button>
     </nav>
   );

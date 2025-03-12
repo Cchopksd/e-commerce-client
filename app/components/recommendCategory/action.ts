@@ -1,13 +1,25 @@
 "use server";
 
+import { getTokenInfo } from "@/app/utils/token";
+
 export async function fetchRecommendCategory({
   category,
 }: {
   category: string;
 }) {
   try {
+    const getUserInfo = await getTokenInfo();
+
     const response = await fetch(
-      `${process.env.HOST_NAME}/product?page=1&limit=4&category=${category}`
+      `${
+        process.env.HOST_NAME
+      }/product?page=1&limit=4&category=${category}&user_id=${
+        getUserInfo?.sub || ""
+      }`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
     );
 
     if (!response.ok) {
