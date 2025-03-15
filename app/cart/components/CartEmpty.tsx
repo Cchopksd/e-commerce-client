@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function CartEmpty() {
   return (
-    <div className="flex flex-col items-center justify-center p-8 md:p-12 bg-white rounded-lg shadow-sm">
+    <div className="flex-1 min-h-screen h-full flex flex-col items-center justify-center p-8 md:p-12 bg-white rounded-lg shadow-sm">
       <div className="rounded-full bg-blue-50 p-6 mb-6 transform transition-all duration-300 hover:scale-105">
         <ShoppingCart size={32} className="text-blue-500" />
       </div>

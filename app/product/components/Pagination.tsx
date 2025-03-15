@@ -18,7 +18,6 @@ export default function Pagination({
 }: Pagination) {
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
-    console.log(totalPages);
     if (totalPages <= maxVisible) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
@@ -61,8 +60,6 @@ export default function Pagination({
   const onPageChange = (page: number) => {
     window.location.href = `${search}&page=${page}`;
   };
-
-  console.log(getPageNumbers());
 
   return (
     <nav

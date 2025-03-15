@@ -31,22 +31,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ReduxProvider>
-      <html>
-        <body
-          className={`${roboto.className} antialiased flex-1 h-full min-h-screen bg-slate-100`}
-        >
+    <html lang="en">
+      <body
+        className={`${roboto.className} antialiased bg-slate-100 flex flex-col min-h-screen`}
+      >
+        <ReduxProvider>
           <Navbar />
-          {children}
+          <main className="flex-1">{children}</main>
           <Footer />
-        </body>
-      </html>
-    </ReduxProvider>
+        </ReduxProvider>
+      </body>
+    </html>
   );
 }

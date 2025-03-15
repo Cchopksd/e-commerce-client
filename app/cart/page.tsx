@@ -1,12 +1,13 @@
 import React from "react";
 import { fetchCartByID } from "./components/action";
 import Cart from "./components/cart";
+import CartEmpty from "./components/CartEmpty";
 
 export default async function CartPage() {
   const result = await fetchCartByID();
 
   if (!result) {
-    return null;
+    return <CartEmpty />;
   }
 
   return (

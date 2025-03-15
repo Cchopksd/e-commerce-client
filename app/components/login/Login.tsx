@@ -180,13 +180,13 @@ export default function Login() {
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              onClick={toggleForm}
+            Don't have an account?{" "}
+            <a
+              href="/sign-up"
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              {isLogin ? "Sign up" : "Sign in"}
-            </button>
+              Sign up
+            </a>
           </p>
         </div>
       </Modal>

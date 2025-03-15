@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { decryptToken } from "./app/utils/token";
+import { fetchCartByID } from "./app/checkout/components/action";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-
-  // Retrieve the token from cookies
   const token = request.cookies.get("user-token")?.value;
 
-  // Special handling for OAuth routes
+  // Handle OAuth token callback
   if (pathname.startsWith("/oauth")) {
     const oAuthToken = request.nextUrl.searchParams.get("token");
 
@@ -18,7 +17,7 @@ export async function middleware(request: NextRequest) {
         httpOnly: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-        maxAge: 24 * 60 * 60 * 1000 * 7, // 24 hours
+        maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
         path: "/",
       });
       return response;
@@ -26,18 +25,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Verify and decode token
-  try {
-    if (!token) {
+  // If accessing checkout, verify cart has items
+  if (pathname.startsWith("/checkout")) {
+    try {
+      const cartItem = await fetchCartByID(); // Optionally pass token if needed: fetchCartByID(token)
+      if (!cartItem || cartItem.cart?.length === 0) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+    } catch (err) {
+      console.error("Cart fetch failed:", err);
       return NextResponse.redirect(new URL("/", request.url));
     }
+  }
+
+  // No token — redirect to home for protected routes
+  if (!token) {
+    return NextResponse.next(); // Allow public access unless below conditions match
+  }
+
+  try {
     const decodedToken = await decryptToken(token.toString());
 
     if (!decodedToken) {
-      return NextResponse.redirect(new URL("/", request.url));
+      const response = NextResponse.redirect(new URL("/", request.url));
+      response.cookies.delete("user-token");
+      return response;
     }
 
-    // Role-based access control
+    // Role-based redirects
     if (
       decodedToken.role !== "admin" &&
       pathname.startsWith("/admin-dashboard")
@@ -60,10 +75,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/login",
-    "/oauth",
-    "/admin-dashboard/:path*",
-    "/profile/:path*",
-    "/cart",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
