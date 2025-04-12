@@ -100,7 +100,7 @@ export default function Navbar({
             <div className="flex justify-center">
               <a
                 href="/"
-                className="text-xl md:text-2xl font-bold tracking-wider"
+                className="text-xl md:text-2xl font-bold tracking-wider text-[#BC4040]"
                 aria-label="Homepage"
               >
                 KIRAMIZ
